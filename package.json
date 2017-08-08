@@ -4,7 +4,7 @@
   "description": "tuto restful node",
   "main": "server.js",
   "scripts": {
-    "start" : "nodemon zob.js --exec babel-node --presets es2015,stage-2" ,
+    "start" : "nodemon server.js --exec babel-node --presets es2015,stage-2" ,
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Zolano",
