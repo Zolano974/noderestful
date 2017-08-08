@@ -1,9 +1,9 @@
-import Knex from './knex';          //QueryBuilder
-import private_key from './privatekey';
+import Knex from './knex';                  //QueryBuilder
+import private_key from './privatekey';     //PRIVATE KEY
 
-const jwt = require('jsonwebtoken')
-const Joi = require('joi'); 	//inputs validation
-const Bcrypt = require('bcrypt'); 	// encryption
+const jwt = require('jsonwebtoken')         //JWT
+const Joi = require('joi'); 	            //inputs validation
+const Bcrypt = require('bcrypt'); 	        // encryption
 
 const routes = [
     //HELLO WORLD
@@ -152,81 +152,6 @@ const routes = [
             }
         }
     },
-    //POST / GET MESSAGES /!\ PAS BIEN USAGE DU POST POUR CONSULTER
-    {
-        method: 'POST',
-        path: '/messages',
-        handler: function (request, reply) {
-
-            const uid = request.payload.uid;
-
-            var postOperation =
-                Knex('messages')
-                    .where('uid_fk', uid)
-                    .select()
-                    .then((results) => {
-                        //gestion de l'absence de données
-                        if (!results || results.length === 0) {
-                            reply({
-                                error: true,
-                                errMessage: 'no messages found by uid ' + uid,
-                            });
-                        }
-
-                        //response
-                        reply({
-                            data: results,
-                            count: results.length,
-                        });
-                    })
-                    .catch((err) => {
-                        reply('server-side error')
-                    })
-        },
-        config: {
-            auth: {
-                strategy: 'token'
-            },
-            validate: {
-                payload: {
-                    uid: Joi.number().integer()
-                }
-            }
-        }
-    },
-    //DELETE USER
-    {
-        method: 'DELETE',
-        path: '/user/{uid}',
-        handler: function (request, reply) {
-            const uid = request.params.uid;
-            Knex('users')
-                .where('uid', uid)
-                .del()
-                .then((results) => {
-                    if(results.length > 0){
-                        reply(true)
-                        return;
-                    }
-                    reply(false);
-                    return;
-                })
-                .catch((err) => {
-                    reply('server-side error')
-                });
-        },
-        config: {
-            auth: {
-                strategy: 'token'
-            },
-            validate: {
-                params: {
-                    uid: Joi.number().integer(),
-                    mid: Joi.number().integer()
-                }
-            }
-        }
-    },
     //CREATE USER (POST)
     {
         method: 'POST',
@@ -295,6 +220,39 @@ const routes = [
                     username: Joi.string().alphanum().min(3).max(30).required(),
                     email: Joi.string().email(),
                     password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
+                }
+            }
+        }
+    },
+    //DELETE USER
+    {
+        method: 'DELETE',
+        path: '/user/{uid}',
+        handler: function (request, reply) {
+            const uid = request.params.uid;
+            Knex('users')
+                .where('uid', uid)
+                .del()
+                .then((results) => {
+                    if(results.length > 0){
+                        reply(true)
+                        return;
+                    }
+                    reply(false);
+                    return;
+                })
+                .catch((err) => {
+                    reply('server-side error')
+                });
+        },
+        config: {
+            auth: {
+                strategy: 'token'
+            },
+            validate: {
+                params: {
+                    uid: Joi.number().integer(),
+                    mid: Joi.number().integer()
                 }
             }
         }
