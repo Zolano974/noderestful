@@ -1,5 +1,28 @@
-import Knex from './knex';          //QueryBuilder
-import jwt from 'jsonwebtoken';     //JWT
+'use strict';
+
+const Hapi = require('hapi');	//REST API framework
+const Joi = require('joi'); 	//inputs validation
+const Bcrypt = require('bcrypt'); 	// encryption
+const HapiAuthJwt = require('hapi-auth-jwt');
+
+// import routes from './src/routes';
+// import Knex from './src/knex';          //QueryBuilder
+const Knex = require('knex')({
+
+    client: 'mysql',
+    connection: {
+        host: '127.0.0.1',
+
+        user: 'root',
+        password: '',
+
+        database: 'noderestful',
+        charset: 'utf8',
+    }
+
+});
+
+const jwt = require('jsonwebtoken');     //JWT
 
 const routes = [
     //HELLO WORLD
@@ -28,45 +51,45 @@ const routes = [
                 .where(
                     'username', username
                 ).select(
-                    'uid', 'passcode'
-                ).then( ( [user] ) => {
+                'uid', 'passcode'
+            ).then( ( [user] ) => {
 
-                        //absence de l'utilisateur
-                        if( !user ) {
-                            reply( {
-                                error: true,
-                                errMessage: 'the specified user was not found',
-                            } );
-                            return;
-                        }
-                        //on compare les hash
-                        if(Bcrypt.compareSync(password, user.passcode)){
-
-                            //on génère le token JWT
-                            const token = jwt.sign({
-                                    username,
-                                    scope: user.uid,
-                                },
-                                privateKey,
-                                {
-                                    algorithm: 'HS256',
-                                    expiresIn: '1h',
-                                }
-                            );
-
-                            //on renvoie le token JWT
-                            reply({
-                                token,
-                                scope: user.uid,
-                            })
-                        }
-                        else{
-                            reply('invalid password, asshole')
-                        }
+                    //absence de l'utilisateur
+                    if( !user ) {
+                        reply( {
+                            error: true,
+                            errMessage: 'the specified user was not found',
+                        } );
+                        return;
                     }
-                ).catch( ( err ) => {
-                    reply( 'server-side error' );
-                } );
+                    //on compare les hash
+                    if(Bcrypt.compareSync(password, user.passcode)){
+
+                        //on génère le token JWT
+                        const token = jwt.sign({
+                                username,
+                                scope: user.uid,
+                            },
+                            privateKey,
+                            {
+                                algorithm: 'HS256',
+                                expiresIn: '1h',
+                            }
+                        );
+
+                        //on renvoie le token JWT
+                        reply({
+                            token,
+                            scope: user.uid,
+                        })
+                    }
+                    else{
+                        reply('invalid password, asshole')
+                    }
+                }
+            ).catch( ( err ) => {
+                reply( 'server-side error' );
+            } );
         }
     },
     //GET USERS
@@ -90,8 +113,8 @@ const routes = [
                         count: results.length,
                     });
                 }).catch((err) => {
-                    reply('server-side error');
-                });
+                reply('server-side error');
+            });
         },
         config: {
             auth: {
@@ -226,14 +249,14 @@ const routes = [
 
             //ajout d'un utilisateur
             Knex('users')
-            .returning('uid')
-            .insert(
-                {
-                    username: user.username,
-                    email: user.email,
-                    passcode: encryptedPassword,
-                }
-            ).then((results) => {
+                .returning('uid')
+                .insert(
+                    {
+                        username: user.username,
+                        email: user.email,
+                        passcode: encryptedPassword,
+                    }
+                ).then((results) => {
                 reply(results.uid)
             }).catch((err) => {
                 reply('server-side error')
@@ -253,4 +276,45 @@ const routes = [
 
 ];
 
-export default routes;
+
+const privateKey = 'vZiYpmTzqXMp8PpYXKwqc9ShQ1UhyAfy';
+
+// Create a server with a host and port
+const server = new Hapi.Server();
+
+
+server.connection({
+    host: 'localhost',
+    port: 8000
+});
+
+// SETUP AUTHENTICATION
+server.register(HapiAuthJwt, (err) => {
+
+    //on définit la stratégie d'authent
+    server.auth.strategy('token', 'jwt', {
+        key: privateKey,
+        verifyOptions: {
+            algorithms: ['HS256'],
+        }
+    });
+
+    //on ajoute les routes issues de routes.js
+    routes.forEach((route) => {
+        console.log( `attaching ${ route.path }` );
+        server.route( route );
+    });
+
+});
+
+
+
+//Launch
+server.start((err) => {
+    if (err) {
+        console.error('error handled');
+        console.error(err);
+        throw err;
+    }
+    console.log('Server running at:', server.info.uri);
+});

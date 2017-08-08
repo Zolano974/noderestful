@@ -2,12 +2,12 @@
   "name": "restful",
   "version": "1.0.0",
   "description": "tuto restful node",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Zolano",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "bcrypt": "^1.0.2",
     "hapi": "^16.5.2",
