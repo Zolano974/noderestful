@@ -51,19 +51,20 @@ const routes = [
                 .where(
                     'username', username
                 ).select(
-                'uid', 'passcode'
-            ).then( ( [user] ) => {
+                    'uid', 'password'
+                ).then( ( [user] ) => {
 
                     //absence de l'utilisateur
                     if( !user ) {
-                        reply( {
+                        reply({
                             error: true,
                             errMessage: 'the specified user was not found',
-                        } );
+                        });
                         return;
                     }
                     //on compare les hash
-                    if(Bcrypt.compareSync(password, user.passcode)){
+                    if(Bcrypt.compareSync(password, user.password)){
+                    // if(password === user.password){
 
                         //on génère le token JWT
                         const token = jwt.sign({
@@ -89,7 +90,7 @@ const routes = [
                 }
             ).catch( ( err ) => {
                 reply( 'server-side error' );
-            } );
+            });
         }
     },
     //GET USERS
@@ -99,7 +100,7 @@ const routes = [
         handler: function (request, reply) {
 
             Knex('users')
-                .select('uid', 'username')
+                .select('uid', 'username', 'password')
                 .then((results) => {
                     if (!results || results.length === 0) {
                         reply({
@@ -206,15 +207,14 @@ const routes = [
             }
         }
     },
-    //DELETE MESSAGE
+    //DELETE USER
     {
         method: 'DELETE',
-        path: '/message/{uid}/{mid}',
+        path: '/user/{uid}',
         handler: function (request, reply) {
             const uid = request.params.uid;
-            const mid = request.params.mid;
-
-            const deleteOperation = Knex('messages').where('uid_fk', uid).andWhere('mid', mid)
+            Knex('users')
+                .where('uid', uid)
                 .del()
                 .then((results) => {
                     reply(true)
@@ -238,7 +238,7 @@ const routes = [
     //CREATE USER (POST)
     {
         method: 'POST',
-        path: '/signup',
+        path: '/user',
         handler: function (request, reply) {
 
             const user = request.payload;
@@ -254,13 +254,47 @@ const routes = [
                     {
                         username: user.username,
                         email: user.email,
-                        passcode: encryptedPassword,
+                        password: encryptedPassword,
                     }
                 ).then((results) => {
-                reply(results.uid)
-            }).catch((err) => {
-                reply('server-side error')
-            })
+                    reply(results.uid)
+                }).catch((err) => {
+                    reply(err)
+                    // reply('server-side error')
+                })
+        },
+        config: {
+
+            validate: {
+                payload: {
+                    username: Joi.string().alphanum().min(3).max(30).required(),
+                    email: Joi.string().email(),
+                    password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
+                }
+            }
+        }
+    },
+    //UPDATE USER (PUT)
+    {
+        method: 'PUT',
+        path: '/user/{uid}',
+        handler: function (request, reply) {
+
+            const uid = request.params.uid;
+            const user = request.payload;
+
+            //ajout d'un utilisateur
+            Knex('users')
+                .where('uid', uid)
+                .update({
+                    username: user.username,
+                    email: user.email,
+                }).then((results) => {
+                    reply(true)
+                }).catch((err) => {
+                    reply(err)
+                    // reply('server-side error')
+                })
         },
         config: {
 
@@ -301,7 +335,7 @@ server.register(HapiAuthJwt, (err) => {
 
     //on ajoute les routes issues de routes.js
     routes.forEach((route) => {
-        console.log( `attaching ${ route.path }` );
+        console.log( `attaching route ${ route.path }` );
         server.route( route );
     });
 

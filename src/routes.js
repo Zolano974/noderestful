@@ -1,5 +1,9 @@
 import Knex from './knex';          //QueryBuilder
-import jwt from 'jsonwebtoken';     //JWT
+import private_key from './privatekey';
+
+const jwt = require('jsonwebtoken')
+const Joi = require('joi'); 	//inputs validation
+const Bcrypt = require('bcrypt'); 	// encryption
 
 const routes = [
     //HELLO WORLD
@@ -21,6 +25,7 @@ const routes = [
         method: 'POST',
         handler: ( request, reply ) => {
 
+
             // This is a ES6 standard
             const { username, password } = request.payload;
 
@@ -28,45 +33,51 @@ const routes = [
                 .where(
                     'username', username
                 ).select(
-                    'uid', 'passcode'
-                ).then( ( [user] ) => {
+                'uid', 'password'
+            ).then( ( [user] ) => {
 
-                        //absence de l'utilisateur
-                        if( !user ) {
-                            reply( {
-                                error: true,
-                                errMessage: 'the specified user was not found',
-                            } );
-                            return;
-                        }
-                        //on compare les hash
-                        if(Bcrypt.compareSync(password, user.passcode)){
-
-                            //on génère le token JWT
-                            const token = jwt.sign({
-                                    username,
-                                    scope: user.uid,
-                                },
-                                privateKey,
-                                {
-                                    algorithm: 'HS256',
-                                    expiresIn: '1h',
-                                }
-                            );
-
-                            //on renvoie le token JWT
-                            reply({
-                                token,
-                                scope: user.uid,
-                            })
-                        }
-                        else{
-                            reply('invalid password, asshole')
-                        }
+                    //absence de l'utilisateur
+                    if( !user ) {
+                        reply({
+                            error: true,
+                            errMessage: 'the specified user was not found',
+                        });
+                        return;
                     }
-                ).catch( ( err ) => {
-                    reply( 'server-side error' );
-                } );
+                    //on compare les hash
+                    if(Bcrypt.compareSync(password, user.password)){
+                        // if(password === user.password){
+
+                        //on génère le token JWT
+                        const token = jwt.sign({
+                                username,
+                                scope: user.uid,
+                            },
+                            private_key,
+                            {
+                                algorithm: 'HS256',
+                                expiresIn: '1h',
+                            }
+                        );
+                        // reply({
+                        //     debug: true,
+                        //     ok: true
+                        // });
+                        // return;
+
+                        //on renvoie le token JWT
+                        reply({
+                            token,
+                            scope: user.uid,
+                        })
+                    }
+                    else{
+                        reply('invalid password, asshole')
+                    }
+                }
+            ).catch( ( err ) => {
+                reply( 'server-side error' );
+            });
         }
     },
     //GET USERS
@@ -76,7 +87,7 @@ const routes = [
         handler: function (request, reply) {
 
             Knex('users')
-                .select('uid', 'username')
+                .select('uid', 'username', 'password')
                 .then((results) => {
                     if (!results || results.length === 0) {
                         reply({
@@ -90,8 +101,8 @@ const routes = [
                         count: results.length,
                     });
                 }).catch((err) => {
-                    reply('server-side error');
-                });
+                reply('server-side error');
+            });
         },
         config: {
             auth: {
@@ -183,18 +194,22 @@ const routes = [
             }
         }
     },
-    //DELETE MESSAGE
+    //DELETE USER
     {
         method: 'DELETE',
-        path: '/message/{uid}/{mid}',
+        path: '/user/{uid}',
         handler: function (request, reply) {
             const uid = request.params.uid;
-            const mid = request.params.mid;
-
-            const deleteOperation = Knex('messages').where('uid_fk', uid).andWhere('mid', mid)
+            Knex('users')
+                .where('uid', uid)
                 .del()
                 .then((results) => {
-                    reply(true)
+                    if(results.length > 0){
+                        reply(true)
+                        return;
+                    }
+                    reply(false);
+                    return;
                 })
                 .catch((err) => {
                     reply('server-side error')
@@ -215,7 +230,7 @@ const routes = [
     //CREATE USER (POST)
     {
         method: 'POST',
-        path: '/signup',
+        path: '/user',
         handler: function (request, reply) {
 
             const user = request.payload;
@@ -226,17 +241,18 @@ const routes = [
 
             //ajout d'un utilisateur
             Knex('users')
-            .returning('uid')
-            .insert(
-                {
-                    username: user.username,
-                    email: user.email,
-                    passcode: encryptedPassword,
-                }
-            ).then((results) => {
+                .returning('uid')
+                .insert(
+                    {
+                        username: user.username,
+                        email: user.email,
+                        password: encryptedPassword,
+                    }
+                ).then((results) => {
                 reply(results.uid)
             }).catch((err) => {
-                reply('server-side error')
+                reply(err)
+                // reply('server-side error')
             })
         },
         config: {
@@ -250,7 +266,39 @@ const routes = [
             }
         }
     },
+    //UPDATE USER (PUT)
+    {
+        method: 'PUT',
+        path: '/user/{uid}',
+        handler: function (request, reply) {
 
-];
+            const uid = request.params.uid;
+            const user = request.payload;
+
+            //ajout d'un utilisateur
+            Knex('users')
+                .where('uid', uid)
+                .update({
+                    username: user.username,
+                    email: user.email,
+                }).then((results) => {
+                reply(true)
+            }).catch((err) => {
+                reply(err)
+                // reply('server-side error')
+            })
+        },
+        config: {
+
+            validate: {
+                payload: {
+                    username: Joi.string().alphanum().min(3).max(30).required(),
+                    email: Joi.string().email(),
+                    password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
+                }
+            }
+        }
+    },
+]
 
 export default routes;
