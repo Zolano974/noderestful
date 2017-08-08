@@ -1,0 +1,20 @@
+{
+  "name": "restful",
+  "version": "1.0.0",
+  "description": "tuto restful node",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zolano",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^1.0.2",
+    "hapi": "^16.5.2",
+    "hapi-auth-jwt": "^4.0.0",
+    "joi": "^10.6.0",
+    "jsonwebtoken": "^7.4.2",
+    "knex": "^0.13.0",
+    "mysql": "^2.14.1"
+  }
+}

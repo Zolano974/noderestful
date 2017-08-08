@@ -1,0 +1,9 @@
+Username validation minimum value 3 characters and maximum 30. 	=> username: Joi.string().alphanum().min(3).max(30).required()
+
+Password regular expression min 8 and max 30			=> password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
+
+Message validation supports both strings and numbers. 		=>message: [Joi.string(), Joi.number()]
+
+Birth year validation 						=> birthyear: Joi.number().integer().min(1900).max(2013)
+
+Email validation 						=> email: Joi.string().email()
