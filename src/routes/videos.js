@@ -7,79 +7,21 @@ const Joi = require('joi'); 	            //inputs validation
 const Bcrypt = require('bcrypt'); 	        // encryption
 
 const videoRoutes = [
-    //AUTHENTICATE
-    {
-        path: '/auth',
-        method: 'POST',
-        handler: ( request, reply ) => {
-
-
-            // This is a ES6 standard
-            const { username, password } = request.payload;
-
-            Knex( 'users' )
-                .where(
-                    'username', username
-                ).select(
-                'uid', 'password'
-            ).then( ( [user] ) => {
-
-                    //absence de l'utilisateur
-                    if( !user ) {
-                        reply({
-                            error: true,
-                            errMessage: 'the specified user was not found',
-                        });
-                        return;
-                    }
-                    //on compare les hash
-                    if(Bcrypt.compareSync(password, user.password)){
-                        // if(password === user.password){
-
-                        //on génère le token JWT
-                        const token = jwt.sign({
-                                username,
-                                scope: user.uid,
-                                group: "zob",
-                            },
-                            private_key,
-                            {
-                                algorithm: 'HS256',
-                                expiresIn: '1h',
-                            }
-                        );
-
-                        //on renvoie le token JWT
-                        reply({
-                            token,
-                            scope: user.uid,
-                        })
-                    }
-                    else{
-                        reply('invalid password, asshole')
-                    }
-                }
-            ).catch( ( err ) => {
-                reply( 'server-side error' );
-            });
-        }
-    },
-    //GET USERS
+    //GET videoS
     {
         method: 'GET',
-        path: '/users',
+        path: '/videos',
         handler: function (request, reply) {
 
-            console.log("yolo")
             console.log(request.auth.credentials.groups)
 
-            Knex('users')
-                .select('uid', 'username', 'password')
+            Knex('videos')
+                .select('id','title','description', 'file', 'created')
                 .then((results) => {
                     if (!results || results.length === 0) {
                         reply({
                             error: true,
-                            errMessage: 'no users found',
+                            errMessage: 'no videos found',
                         });
                     }
                     //response
@@ -97,24 +39,28 @@ const videoRoutes = [
             },
         }
     },
-    // GET USER /ID
+    // GET video /ID
     {
         method: 'GET',
-        path: '/user/{uid}',
+        path: '/videos/{id}',
         handler: function (request, reply) {
-            const uid = request.params.uid;
+            const id = request.params.id;
 
-            const getOperation = Knex('users').where('uid', uid).select(
-                'uid',
-                'username',
-                'email'
-            )
+            Knex('videos')
+                .where('id', id)
+                .select(
+                    'id',
+                    'title',
+                    'desription',
+                    'file',
+                    'created',
+                )
                 .then((results) => {
                     //gestion de l'absence de données
                     if (!results || results.length === 0) {
                         reply({
                             error: true,
-                            errMessage: 'no users found by id ' + uid,
+                            errMessage: 'no videos found by id ' + id,
                         });
                     }
 
@@ -134,34 +80,30 @@ const videoRoutes = [
             },
             validate: {
                 params: {
-                    uid: Joi.number().integer()
+                    id: Joi.number().integer()
                 }
             }
         }
     },
-    //CREATE USER (POST)
+    //CREATE video (POST)
     {
         method: 'POST',
-        path: '/user',
+        path: '/video',
         handler: function (request, reply) {
 
-            const user = request.payload;
-
-            //Encryption
-            var salt = Bcrypt.genSaltSync();
-            var encryptedPassword = Bcrypt.hashSync(user.password, salt);
+            const video = request.payload;
 
             //ajout d'un utilisateur
-            Knex('users')
-                .returning('uid')
+            Knex('videos')
+                .returning('id')
                 .insert(
                     {
-                        username: user.username,
-                        email: user.email,
-                        password: encryptedPassword,
+                        title: video.title,
+                        description: video.description,
+                        file: video.file,
                     }
                 ).then((results) => {
-                reply(results.uid)
+                reply(results.id)
             }).catch((err) => {
                 reply(err)
                 // reply('server-side error')
@@ -171,28 +113,28 @@ const videoRoutes = [
 
             validate: {
                 payload: {
-                    username: Joi.string().alphanum().min(3).max(30).required(),
-                    email: Joi.string().email(),
-                    password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
+                    title: Joi.string().alphanum().max(50).required(),
+                    description: Joi.string().alphanum().max(200).required(),
+                    file: Joi.string().alphanum().max(50).required(),
                 }
             }
         }
     },
-    //UPDATE USER (PUT)
+    //UPDATE video (PUT)
     {
         method: 'PUT',
-        path: '/user/{uid}',
+        path: '/video/{id}',
         handler: function (request, reply) {
 
-            const uid = request.params.uid;
-            const user = request.payload;
+            const id = request.params.id;
+            const video = request.payload;
 
             //ajout d'un utilisateur
-            Knex('users')
-                .where('uid', uid)
+            Knex('videos')
+                .where('id', id)
                 .update({
-                    username: user.username,
-                    email: user.email,
+                    title: video.title,
+                    description: video.description,
                 }).then((results) => {
                 reply(true)
             }).catch((err) => {
@@ -204,21 +146,20 @@ const videoRoutes = [
 
             validate: {
                 payload: {
-                    username: Joi.string().alphanum().min(3).max(30).required(),
-                    email: Joi.string().email(),
-                    password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
+                    title: Joi.string().alphanum().max(50).required(),
+                    description: Joi.string().alphanum().max(200).required(),
                 }
             }
         }
     },
-    //DELETE USER
+    //DELETE video
     {
         method: 'DELETE',
-        path: '/user/{uid}',
+        path: '/video/{id}',
         handler: function (request, reply) {
-            const uid = request.params.uid;
-            Knex('users')
-                .where('uid', uid)
+            const id = request.params.id;
+            Knex('videos')
+                .where('id', id)
                 .del()
                 .then((results) => {
                     if(results.length > 0){
@@ -238,8 +179,7 @@ const videoRoutes = [
             },
             validate: {
                 params: {
-                    uid: Joi.number().integer(),
-                    mid: Joi.number().integer()
+                    id: Joi.number().integer(),
                 }
             }
         }
