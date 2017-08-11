@@ -32,7 +32,7 @@ CREATE TABLE `videos` (
   PRIMARY KEY (`id`)
 );
 
--- uSERS
+-- USERS
 
 CREATE TABLE `users` (
 `id` int(11) AUTO_INCREMENT,

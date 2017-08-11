@@ -1,24 +1,12 @@
-import Knex from './knex';                  //QueryBuilder
-import private_key from './privatekey';     //PRIVATE KEY
+
+import Knex from '../knex';                  //QueryBuilder
+import private_key from '../privatekey';     //PRIVATE KEY
 
 const jwt = require('jsonwebtoken')         //JWT
 const Joi = require('joi'); 	            //inputs validation
 const Bcrypt = require('bcrypt'); 	        // encryption
 
-const routes = [
-    //HELLO WORLD
-    {
-        method: 'GET',
-        path: '/helloworld',
-        handler: function (request, reply) {
-            return reply('zob');
-        },
-        config: {
-            auth: {
-                strategy: 'token'
-            },
-        }
-    },
+const userRoutes = [
     //AUTHENTICATE
     {
         path: '/auth',
@@ -33,8 +21,8 @@ const routes = [
                 .where(
                     'username', username
                 ).select(
-                    'uid', 'password'
-                ).then( ( [user] ) => {
+                'uid', 'password'
+            ).then( ( [user] ) => {
 
                     //absence de l'utilisateur
                     if( !user ) {
@@ -258,4 +246,4 @@ const routes = [
     },
 ]
 
-export default routes;
+export default userRoutes;

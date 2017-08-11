@@ -4,7 +4,7 @@ const Hapi = require('hapi');	//REST API framework
 
 const HapiAuthJwt = require('hapi-auth-jwt');
 
-import routes from './src/router';
+import routes from './src/routes';
 const jwt = require('jsonwebtoken');     //JWT
 import private_key from './src/privatekey';
 
@@ -27,7 +27,7 @@ server.register(HapiAuthJwt, (err) => {
         }
     });
 
-    //on ajoute les routes issues de router.js
+    //on ajoute les routes issues de routes.js
     routes.forEach((route) => {
         console.log( `attaching route ${ route.path }` );
         server.route( route );
