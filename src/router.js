@@ -33,8 +33,8 @@ const routes = [
                 .where(
                     'username', username
                 ).select(
-                'uid', 'password'
-            ).then( ( [user] ) => {
+                    'uid', 'password'
+                ).then( ( [user] ) => {
 
                     //absence de l'utilisateur
                     if( !user ) {
@@ -52,6 +52,7 @@ const routes = [
                         const token = jwt.sign({
                                 username,
                                 scope: user.uid,
+                                group: "zob",
                             },
                             private_key,
                             {
@@ -59,11 +60,6 @@ const routes = [
                                 expiresIn: '1h',
                             }
                         );
-                        // reply({
-                        //     debug: true,
-                        //     ok: true
-                        // });
-                        // return;
 
                         //on renvoie le token JWT
                         reply({
@@ -85,6 +81,9 @@ const routes = [
         method: 'GET',
         path: '/users',
         handler: function (request, reply) {
+
+            console.log("yolo")
+            console.log(request.auth.credentials.groups)
 
             Knex('users')
                 .select('uid', 'username', 'password')

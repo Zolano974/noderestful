@@ -1,8 +1,13 @@
 'use strict';
+
 const Hapi = require('hapi');	                //REST API framework
+
 const HapiAuthJwt = require('hapi-auth-jwt');   //auth JWT
+
 const jwt = require('jsonwebtoken');            //JWT
+
 import routes from './src/router';              //Routes
+
 import private_key from './src/privatekey';     //privatekey
 
 // Create a server with a host and port
