@@ -1,10 +1,11 @@
-
 import Knex from '../knex';                  //QueryBuilder
 import private_key from '../privatekey';     //PRIVATE KEY
 
+import userDao from '../dao/user'
+
 const jwt = require('jsonwebtoken')         //JWT
-const Joi = require('joi'); 	            //inputs validation
-const Bcrypt = require('bcrypt'); 	        // encryption
+const Joi = require('joi') 	            //inputs validation
+const Bcrypt = require('bcrypt') 	        // encryption
 
 const userRoutes = [
     //AUTHENTICATE
@@ -76,7 +77,7 @@ const userRoutes = [
     {
         method: 'DELETE',
         path: '/user/{id}',
-        handler: userDao.deleteUser
+        handler: userDao.deleteUser,
         config: {
             auth: {
                 strategy: 'token'
