@@ -7,22 +7,21 @@ const Joi = require('joi'); 	            //inputs validation
 const Bcrypt = require('bcrypt'); 	        // encryption
 
 const photoRoutes = [
-    //GET USERS
+    //GET PHOTOS
     {
         method: 'GET',
         path: '/photos',
         handler: function (request, reply) {
 
-            console.log("yolo")
             console.log(request.auth.credentials.groups)
 
-            Knex('users')
-                .select('uid', 'username', 'password')
+            Knex('photos')
+                .select('id','title','description', 'file', 'created')
                 .then((results) => {
                     if (!results || results.length === 0) {
                         reply({
                             error: true,
-                            errMessage: 'no users found',
+                            errMessage: 'no photos found',
                         });
                     }
                     //response
@@ -40,24 +39,26 @@ const photoRoutes = [
             },
         }
     },
-    // GET USER /ID
+    // GET PHOTO /ID
     {
         method: 'GET',
-        path: '/user/{uid}',
+        path: '/photos/{id}',
         handler: function (request, reply) {
-            const uid = request.params.uid;
+            const id = request.params.id;
 
-            const getOperation = Knex('users').where('uid', uid).select(
-                'uid',
-                'username',
-                'email'
-            )
+            Knex('photos').where('id', id).select(
+                    'id',
+                    'title',
+                    'desription',
+                    'file',
+                    'created',
+                )
                 .then((results) => {
                     //gestion de l'absence de données
                     if (!results || results.length === 0) {
                         reply({
                             error: true,
-                            errMessage: 'no users found by id ' + uid,
+                            errMessage: 'no photos found by id ' + id,
                         });
                     }
 
@@ -77,34 +78,30 @@ const photoRoutes = [
             },
             validate: {
                 params: {
-                    uid: Joi.number().integer()
+                    id: Joi.number().integer()
                 }
             }
         }
     },
-    //CREATE USER (POST)
+    //CREATE photo (POST)
     {
         method: 'POST',
-        path: '/user',
+        path: '/photo',
         handler: function (request, reply) {
 
-            const user = request.payload;
-
-            //Encryption
-            var salt = Bcrypt.genSaltSync();
-            var encryptedPassword = Bcrypt.hashSync(user.password, salt);
+            const photo = request.payload;
 
             //ajout d'un utilisateur
-            Knex('users')
-                .returning('uid')
+            Knex('photos')
+                .returning('id')
                 .insert(
                     {
-                        username: user.username,
-                        email: user.email,
-                        password: encryptedPassword,
+                        title: photo.title,
+                        description: photo.description,
+                        file: photo.file,
                     }
                 ).then((results) => {
-                reply(results.uid)
+                reply(results.id)
             }).catch((err) => {
                 reply(err)
                 // reply('server-side error')
@@ -114,28 +111,28 @@ const photoRoutes = [
 
             validate: {
                 payload: {
-                    username: Joi.string().alphanum().min(3).max(30).required(),
-                    email: Joi.string().email(),
-                    password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
+                    title: Joi.string().alphanum().max(50).required(),
+                    description: Joi.string().alphanum().max(200).required(),
+                    file: Joi.string().alphanum().max(50).required(),
                 }
             }
         }
     },
-    //UPDATE USER (PUT)
+    //UPDATE photo (PUT)
     {
         method: 'PUT',
-        path: '/user/{uid}',
+        path: '/photo/{id}',
         handler: function (request, reply) {
 
-            const uid = request.params.uid;
-            const user = request.payload;
+            const id = request.params.id;
+            const photo = request.payload;
 
             //ajout d'un utilisateur
-            Knex('users')
-                .where('uid', uid)
+            Knex('photos')
+                .where('id', id)
                 .update({
-                    username: user.username,
-                    email: user.email,
+                    title: photo.title,
+                    description: photo.description,
                 }).then((results) => {
                 reply(true)
             }).catch((err) => {
@@ -147,21 +144,20 @@ const photoRoutes = [
 
             validate: {
                 payload: {
-                    username: Joi.string().alphanum().min(3).max(30).required(),
-                    email: Joi.string().email(),
-                    password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
+                    title: Joi.string().alphanum().max(50).required(),
+                    description: Joi.string().alphanum().max(200).required(),
                 }
             }
         }
     },
-    //DELETE USER
+    //DELETE photo
     {
         method: 'DELETE',
-        path: '/user/{uid}',
+        path: '/photo/{id}',
         handler: function (request, reply) {
-            const uid = request.params.uid;
-            Knex('users')
-                .where('uid', uid)
+            const id = request.params.id;
+            Knex('photos')
+                .where('id', id)
                 .del()
                 .then((results) => {
                     if(results.length > 0){
@@ -181,8 +177,7 @@ const photoRoutes = [
             },
             validate: {
                 params: {
-                    uid: Joi.number().integer(),
-                    mid: Joi.number().integer()
+                    id: Joi.number().integer(),
                 }
             }
         }

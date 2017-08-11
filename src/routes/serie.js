@@ -3,83 +3,33 @@ import Knex from '../knex';                  //QueryBuilder
 import private_key from '../privatekey';     //PRIVATE KEY
 
 const jwt = require('jsonwebtoken')         //JWT
-const Joi = require('joi'); 	            //inputs validation
-const Bcrypt = require('bcrypt'); 	        // encryption
+const Joi = require('joi') 	            //inputs validation
+const Bcrypt = require('bcrypt')        // encryption
 
 const serieRoutes = [
-    //AUTHENTICATE
-    {
-        path: '/auth',
-        method: 'POST',
-        handler: ( request, reply ) => {
-
-
-            // This is a ES6 standard
-            const { username, password } = request.payload;
-
-            Knex( 'users' )
-                .where(
-                    'username', username
-                ).select(
-                'uid', 'password'
-            ).then( ( [user] ) => {
-
-                    //absence de l'utilisateur
-                    if( !user ) {
-                        reply({
-                            error: true,
-                            errMessage: 'the specified user was not found',
-                        });
-                        return;
-                    }
-                    //on compare les hash
-                    if(Bcrypt.compareSync(password, user.password)){
-                        // if(password === user.password){
-
-                        //on génère le token JWT
-                        const token = jwt.sign({
-                                username,
-                                scope: user.uid,
-                                group: "zob",
-                            },
-                            private_key,
-                            {
-                                algorithm: 'HS256',
-                                expiresIn: '1h',
-                            }
-                        );
-
-                        //on renvoie le token JWT
-                        reply({
-                            token,
-                            scope: user.uid,
-                        })
-                    }
-                    else{
-                        reply('invalid password, asshole')
-                    }
-                }
-            ).catch( ( err ) => {
-                reply( 'server-side error' );
-            });
-        }
-    },
-    //GET USERS
+    //GET serieS
     {
         method: 'GET',
-        path: '/users',
+        path: '/series',
         handler: function (request, reply) {
 
-            console.log("yolo")
             console.log(request.auth.credentials.groups)
 
-            Knex('users')
-                .select('uid', 'username', 'password')
+            Knex('series')
+                .select(
+                    'id',
+                    'name',
+                    'description',
+                    'picture',
+                    'mediatype',
+                    'created',
+                    'updated'
+                )
                 .then((results) => {
                     if (!results || results.length === 0) {
                         reply({
                             error: true,
-                            errMessage: 'no users found',
+                            errMessage: 'no series found',
                         });
                     }
                     //response
@@ -97,24 +47,30 @@ const serieRoutes = [
             },
         }
     },
-    // GET USER /ID
+    // GET serie /ID
     {
         method: 'GET',
-        path: '/user/{uid}',
+        path: '/serie/{id}',
         handler: function (request, reply) {
-            const uid = request.params.uid;
+            const id = request.params.id;
 
-            const getOperation = Knex('users').where('uid', uid).select(
-                'uid',
-                'username',
-                'email'
-            )
+            Knex('series')
+                .where('id', id)
+                .select(
+                    'id',
+                    'name',
+                    'description',
+                    'picture',
+                    'mediatype',
+                    'created',
+                    'updated'
+                )
                 .then((results) => {
                     //gestion de l'absence de données
                     if (!results || results.length === 0) {
                         reply({
                             error: true,
-                            errMessage: 'no users found by id ' + uid,
+                            errMessage: 'no series found by id ' + id,
                         });
                     }
 
@@ -134,34 +90,31 @@ const serieRoutes = [
             },
             validate: {
                 params: {
-                    uid: Joi.number().integer()
+                    id: Joi.number().integer()
                 }
             }
         }
     },
-    //CREATE USER (POST)
+    //CREATE serie (POST)
     {
         method: 'POST',
-        path: '/user',
+        path: '/serie',
         handler: function (request, reply) {
 
-            const user = request.payload;
-
-            //Encryption
-            var salt = Bcrypt.genSaltSync();
-            var encryptedPassword = Bcrypt.hashSync(user.password, salt);
+            const serie = request.payload;
 
             //ajout d'un utilisateur
-            Knex('users')
-                .returning('uid')
+            Knex('series')
+                .returning('id')
                 .insert(
                     {
-                        username: user.username,
-                        email: user.email,
-                        password: encryptedPassword,
+                        name : serie.name,
+                        description : serie.description,
+                        picture: serie.picture,
+                        mediatype : serie.mediatype
                     }
                 ).then((results) => {
-                reply(results.uid)
+                reply(results.id)
             }).catch((err) => {
                 reply(err)
                 // reply('server-side error')
@@ -171,54 +124,59 @@ const serieRoutes = [
 
             validate: {
                 payload: {
-                    username: Joi.string().alphanum().min(3).max(30).required(),
-                    email: Joi.string().email(),
-                    password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
+                    name: Joi.string().alphanum().max(50).required(),
+                    description: Joi.string().alphanum().max(200).required(),
+                    picture: Joi.string().alphanum().max(50).required(),
+                    mediatype: Joi.string().alphanum().min(4).max(5).required(),
+
                 }
             }
         }
     },
-    //UPDATE USER (PUT)
+    //UPDATE serie (PUT)
     {
         method: 'PUT',
-        path: '/user/{uid}',
+        path: '/serie/{id}',
         handler: function (request, reply) {
 
-            const uid = request.params.uid;
-            const user = request.payload;
+            const id = request.params.id;
+            const serie = request.payload;
 
             //ajout d'un utilisateur
-            Knex('users')
-                .where('uid', uid)
+            Knex('series')
+                .where('id', id)
                 .update({
-                    username: user.username,
-                    email: user.email,
+                    name : serie.name,
+                    description : serie.description,
+                    picture: serie.picture,
+                    mediatype : serie.mediatype
                 }).then((results) => {
-                reply(true)
-            }).catch((err) => {
-                reply(err)
-                // reply('server-side error')
-            })
+                    reply(true)
+                }).catch((err) => {
+                    reply(err)
+                    // reply('server-side error')
+                })
         },
         config: {
 
             validate: {
                 payload: {
-                    username: Joi.string().alphanum().min(3).max(30).required(),
-                    email: Joi.string().email(),
-                    password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
+                    name: Joi.string().alphanum().max(50).required(),
+                    description: Joi.string().alphanum().max(200).required(),
+                    picture: Joi.string().alphanum().max(50).required(),
+                    mediatype: Joi.string().alphanum().min(4).max(5).required(),
                 }
             }
         }
     },
-    //DELETE USER
+    //DELETE serie
     {
         method: 'DELETE',
-        path: '/user/{uid}',
+        path: '/serie/{id}',
         handler: function (request, reply) {
-            const uid = request.params.uid;
-            Knex('users')
-                .where('uid', uid)
+            const id = request.params.id;
+            Knex('series')
+                .where('id', id)
                 .del()
                 .then((results) => {
                     if(results.length > 0){
@@ -238,8 +196,7 @@ const serieRoutes = [
             },
             validate: {
                 params: {
-                    uid: Joi.number().integer(),
-                    mid: Joi.number().integer()
+                    id: Joi.number().integer(),
                 }
             }
         }

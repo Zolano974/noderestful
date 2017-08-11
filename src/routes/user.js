@@ -21,7 +21,7 @@ const userRoutes = [
                 .where(
                     'username', username
                 ).select(
-                'uid', 'password'
+                'id', 'password'
             ).then( ( [user] ) => {
 
                     //absence de l'utilisateur
@@ -39,7 +39,7 @@ const userRoutes = [
                         //on génère le token JWT
                         const token = jwt.sign({
                                 username,
-                                scope: user.uid,
+                                scope: user.id,
                                 group: "zob",
                             },
                             private_key,
@@ -52,7 +52,7 @@ const userRoutes = [
                         //on renvoie le token JWT
                         reply({
                             token,
-                            scope: user.uid,
+                            scope: user.id,
                         })
                     }
                     else{
@@ -70,11 +70,10 @@ const userRoutes = [
         path: '/users',
         handler: function (request, reply) {
 
-            console.log("yolo")
             console.log(request.auth.credentials.groups)
 
             Knex('users')
-                .select('uid', 'username', 'password')
+                .select('id', 'username', 'password')
                 .then((results) => {
                     if (!results || results.length === 0) {
                         reply({
@@ -100,12 +99,12 @@ const userRoutes = [
     // GET USER /ID
     {
         method: 'GET',
-        path: '/user/{uid}',
+        path: '/user/{id}',
         handler: function (request, reply) {
-            const uid = request.params.uid;
+            const id = request.params.id;
 
-            const getOperation = Knex('users').where('uid', uid).select(
-                'uid',
+            const getOperation = Knex('users').where('id', id).select(
+                'id',
                 'username',
                 'email'
             )
@@ -114,7 +113,7 @@ const userRoutes = [
                     if (!results || results.length === 0) {
                         reply({
                             error: true,
-                            errMessage: 'no users found by id ' + uid,
+                            errMessage: 'no users found by id ' + id,
                         });
                     }
 
@@ -134,7 +133,7 @@ const userRoutes = [
             },
             validate: {
                 params: {
-                    uid: Joi.number().integer()
+                    id: Joi.number().integer()
                 }
             }
         }
@@ -153,7 +152,7 @@ const userRoutes = [
 
             //ajout d'un utilisateur
             Knex('users')
-                .returning('uid')
+                .returning('id')
                 .insert(
                     {
                         username: user.username,
@@ -161,7 +160,7 @@ const userRoutes = [
                         password: encryptedPassword,
                     }
                 ).then((results) => {
-                reply(results.uid)
+                reply(results.id)
             }).catch((err) => {
                 reply(err)
                 // reply('server-side error')
@@ -181,15 +180,15 @@ const userRoutes = [
     //UPDATE USER (PUT)
     {
         method: 'PUT',
-        path: '/user/{uid}',
+        path: '/user/{id}',
         handler: function (request, reply) {
 
-            const uid = request.params.uid;
+            const id = request.params.id;
             const user = request.payload;
 
             //ajout d'un utilisateur
             Knex('users')
-                .where('uid', uid)
+                .where('id', id)
                 .update({
                     username: user.username,
                     email: user.email,
@@ -214,11 +213,11 @@ const userRoutes = [
     //DELETE USER
     {
         method: 'DELETE',
-        path: '/user/{uid}',
+        path: '/user/{id}',
         handler: function (request, reply) {
-            const uid = request.params.uid;
+            const id = request.params.id;
             Knex('users')
-                .where('uid', uid)
+                .where('id', id)
                 .del()
                 .then((results) => {
                     if(results.length > 0){
@@ -238,7 +237,7 @@ const userRoutes = [
             },
             validate: {
                 params: {
-                    uid: Joi.number().integer(),
+                    id: Joi.number().integer(),
                     mid: Joi.number().integer()
                 }
             }

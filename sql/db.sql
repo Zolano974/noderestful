@@ -3,8 +3,9 @@
 CREATE TABLE `series` (
   `id`        int(11),
   `name`      varchar(50),
+  `description`      varchar(200),
   `picture`   varchar(50),
-  `type`      enum('photo', 'video'),
+  `mediatype`      enum('photo', 'video'),
   `created`   timestamp ,
   `updated`   timestamp,
   PRIMARY KEY (`id`)
