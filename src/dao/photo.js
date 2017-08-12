@@ -135,15 +135,7 @@ const photoDao = {
                 .where('id', id)
                 .del()
                 .then((results) => {
-
                     reply(results)
-
-                    // if(results.length > 0){
-                    //     reply('deletion complete')
-                    //     return;
-                    // }
-                    // reply(false);
-                    // return;
                 })
                 .catch((err) => {
                     reply('server-side error I')

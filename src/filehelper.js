@@ -27,7 +27,6 @@ const filehelper = {
         return path.replace(upload_path, '');
     },
     remove: function(pathToRemove){
-        // fs.unlinkSync(pathToRemove)
         fs.unlink(upload_path + pathToRemove, function(err) {
             if(err && err.code == 'ENOENT') {
                 // file doens't exist
