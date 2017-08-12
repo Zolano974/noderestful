@@ -146,6 +146,34 @@ const videoDao = {
                 reply("zob")
             });
     },
+    //CUSTOM
+    getAllVideosBySerieId: function(serieId){
+
+        Knex('videos')
+            .where('link_series_videos.serie_id', serieId)
+            .select(
+                'videos.id',
+                'title',
+                'desription',
+                'file',
+                'created',
+            )
+            .leftJoin(
+                'link_series_videos',
+                'videos.id',
+                'link_series_videos.video_id'
+            )
+            .then((results) => {
+                //gestion de l'absence de données
+                if (!results || results.length === 0) {
+                    return []
+                }
+                return results
+            })
+            .catch((err) => {
+                console.log(err)
+            });
+    },
 }
 
 export default videoDao

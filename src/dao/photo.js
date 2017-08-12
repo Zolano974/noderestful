@@ -150,6 +150,38 @@ const photoDao = {
                 // reply( 'server-side error II' );
             });
     },
+    //CUSTOM
+    getAllPhotosBySerieId: function(serieId){
+
+        console.log(serieId)
+
+        Knex('photos')
+            .where('link_series_photos.serie_id', serieId)
+            .select(
+                'photos.id',
+                'title',
+                'description',
+                'file',
+                'created',
+            )
+            .leftJoin(
+                'link_series_photos',
+                'photos.id',
+                'link_series_photos.photo_id'
+            )
+            .then((results) => {
+                console.log(results)
+                //gestion de l'absence de données
+                if (!results || results.length === 0) {
+                    return []
+                }
+                return results
+            })
+            .catch((err) => {
+                console.log(err)
+                return "enculé"
+            });
+    },
 }
 
 export default photoDao

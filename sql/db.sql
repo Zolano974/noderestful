@@ -44,10 +44,20 @@ CREATE TABLE `users` (
 PRIMARY KEY (`id`)
 );
 
--- MESSAGES (todelete)
-CREATE TABLE `messages` (
-`mid` int(11) AUTO_INCREMENT,
-`message` text,
-`uid_fk` int(11),
-PRIMARY KEY (`mid`)
+-- LINK SERIES VIDEOS
+
+CREATE TABLE `link_series_videos` (
+  `id`        int(11),
+  `serie_id`  int(11),
+  `video_id`  int(11),
+  PRIMARY KEY (`id`)
+);
+
+-- LINK SERIES PHOTOS
+
+CREATE TABLE `link_series_photos` (
+  `id`        int(11),
+  `serie_id`  int(11),
+  `photo_id`  int(11),
+  PRIMARY KEY (`id`)
 );

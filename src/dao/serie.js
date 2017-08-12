@@ -1,6 +1,7 @@
 import Knex from '../knex';                  //QueryBuilder
 import fileHelper from '../filehelper'
-
+import videoDao from './video'
+import photoDao from './photo'
 const serieDao = {
     getAllSeries: function (request, reply) {
 
@@ -21,6 +22,7 @@ const serieDao = {
                         errMessage: 'no series found',
                     });
                 }
+
                 //response
                 reply({
                     data: results,
@@ -32,7 +34,6 @@ const serieDao = {
     },
     getSerieById:function (request, reply) {
         const id = request.params.id;
-
         Knex('series')
             .where('id', id)
             .select(
@@ -53,13 +54,34 @@ const serieDao = {
                     });
                 }
 
-                //response
-                reply({
-                    data: results,
-                });
+                var serie = results[0]
+
+                //récupèréation des photos liées
+                var photos = photoDao.getAllPhotosBySerieId(id)
+                reply(photos)
+                return
+                //
+                // var medias = (serie.mediatype === 'photo')
+                //             ? photoDao.getAllPhotosBySerieId(id)
+                //             : videoDao.getAllVideosBySerieId(id)
+                //
+                // console.log(medias)
+                //
+                // //response
+                // reply({
+                //     id: serie.id,
+                //     name: serie.name,
+                //     description: serie.description,
+                //     picture: serie.picture,
+                //     mediatype: serie.mediatype,
+                //     medias: medias,
+                //     created: serie.created,
+                //     updated: serie.updated,
+                // });
             })
             .catch((err) => {
-                reply( 'server-side error' );
+                reply( err);
+                // reply( 'server-side error' );
             });
 
     },
