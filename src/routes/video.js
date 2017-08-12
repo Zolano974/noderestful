@@ -11,7 +11,7 @@ const videoRoutes = [
     {
         method: 'GET',
         path: '/videos',
-        handler: videoDao.getAllVideos(),
+        handler: videoDao.getAllVideos,
         config: {
             auth: {
                 strategy: 'token'

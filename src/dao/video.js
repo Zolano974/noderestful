@@ -4,7 +4,13 @@ const videoDao = {
     getAllVideos: function (request, reply) {
 
         Knex('videos')
-            .select('id','title','description', 'file', 'created')
+            .select(
+                'id',
+                'title',
+                'description',
+                'file',
+                'created'
+            )
             .then((results) => {
                 if (!results || results.length === 0) {
                     reply({
@@ -18,8 +24,8 @@ const videoDao = {
                     count: results.length,
                 });
             }).catch((err) => {
-            reply('server-side error');
-        });
+                reply('server-side error');
+            });
     },
     getVideoById: function (request, reply) {
         const id = request.params.id;

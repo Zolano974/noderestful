@@ -121,3 +121,5 @@ const serieDao = {
             });
     },
 }
+
+export default serieDao
