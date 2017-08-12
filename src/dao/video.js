@@ -1,4 +1,5 @@
 import Knex from '../knex';                  //QueryBuilder
+import fileUpload from '../filehelper'
 
 const videoDao = {
     getAllVideos: function (request, reply) {
@@ -62,6 +63,15 @@ const videoDao = {
 
         const video = request.payload;
 
+        if(!video.file){
+
+            reply('nofile')
+            return
+        }
+
+        //on upload le fichier
+        var path = fileUpload.upload(video.file)
+
         //ajout d'un utilisateur
         Knex('videos')
             .returning('id')
@@ -69,7 +79,7 @@ const videoDao = {
                 {
                     title: video.title,
                     description: video.description,
-                    file: video.file,
+                    file: path,
                 }
             ).then((results) => {
             reply(results)

@@ -40,7 +40,11 @@ const serieRoutes = [
         path: '/serie',
         handler: serieDao.createSerie,
         config: {
-
+            payload: {
+                output: 'stream',
+                parse: true,
+                allow: 'multipart/form-data'
+            },
             validate: {
                 payload: {
                     name: Joi.string().max(50).required(),

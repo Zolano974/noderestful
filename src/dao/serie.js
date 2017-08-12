@@ -1,4 +1,5 @@
 import Knex from '../knex';                  //QueryBuilder
+import fileUpload from '../filehelper'
 
 const serieDao = {
     getAllSeries: function (request, reply) {
@@ -66,6 +67,15 @@ const serieDao = {
 
         const serie = request.payload;
 
+        if(!serie.file){
+
+            reply('nofile')
+            return
+        }
+
+        //on upload le fichier
+        var path = fileUpload.upload(serie.file)
+
         //ajout d'un utilisateur
         Knex('series')
             .returning('id')
@@ -73,7 +83,7 @@ const serieDao = {
                 {
                     name : serie.name,
                     description : serie.description,
-                    picture: serie.picture,
+                    picture: path,
                     mediatype : serie.mediatype
                 }
             ).then((results) => {

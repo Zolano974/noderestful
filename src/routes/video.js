@@ -40,7 +40,11 @@ const videoRoutes = [
         path: '/video',
         handler: videoDao.createVideo,
         config: {
-
+            payload: {
+                output: 'stream',
+                parse: true,
+                allow: 'multipart/form-data'
+            },
             validate: {
                 payload: {
                     title: Joi.string().max(50).required(),
