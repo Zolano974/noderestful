@@ -1,10 +1,13 @@
 import Knex from '../knex';                  //QueryBuilder
 import private_key from '../privatekey';     //PRIVATE KEY
+const jwt = require('jsonwebtoken')         //JWT
+const Bcrypt = require('bcrypt') 	        // encryption
+
 
 const userDao = {
         getAllUsers: function (request, reply) {
             Knex('users')
-                .select('id', 'username', 'password')
+                .select('id', 'username', 'password', 'email')
                 .then((results) => {
                     if (!results || results.length === 0) {
                         reply({
@@ -24,28 +27,30 @@ const userDao = {
         getUserById: function (request, reply) {
             const id = request.params.id;
 
-            const getOperation = Knex('users').where('id', id).select(
+            Knex('users')
+            .where('id', id)
+            .select(
                 'id',
                 'username',
                 'email'
             )
-                .then((results) => {
-                    //gestion de l'absence de données
-                    if (!results || results.length === 0) {
-                        reply({
-                            error: true,
-                            errMessage: 'no users found by id ' + id,
-                        });
-                    }
-
-                    //response
+            .then((results) => {
+                //gestion de l'absence de données
+                if (!results || results.length === 0) {
                     reply({
-                        data: results,
+                        error: true,
+                        errMessage: 'no users found by id ' + id,
                     });
-                })
-                .catch((err) => {
-                    reply('server-side error');
+                }
+
+                //response
+                reply({
+                    data: results,
                 });
+            })
+            .catch((err) => {
+                reply('server-side error');
+            });
 
         },
         createUser: function (request, reply) {
@@ -109,6 +114,7 @@ const userDao = {
         },
         authenticate: function (request, reply) {
 
+            console.log('auth')
 
             // This is a ES6 standard
             const {username, password} = request.payload;
@@ -117,8 +123,9 @@ const userDao = {
                 .where(
                     'username', username
                 ).select(
-                'id', 'password'
-            ).then(([user]) => {
+                    'id',
+                    'password'
+                ).then(([user]) => {
 
                     //absence de l'utilisateur
                     if (!user) {
@@ -156,6 +163,7 @@ const userDao = {
                     }
                 }
             ).catch((err) => {
+                reply(err);
                 reply('server-side error');
             });
         },

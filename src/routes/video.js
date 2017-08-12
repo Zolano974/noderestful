@@ -1,28 +1,28 @@
 
 import Knex from '../knex';                  //QueryBuilder
-import serieDao from '../dao/serie'          //DAO
+import videoDao from '../dao/video'
 
 const jwt = require('jsonwebtoken')         //JWT
-const Joi = require('joi') 	                //inputs validation
-const Bcrypt = require('bcrypt')            // encryption
+const Joi = require('joi'); 	            //inputs validation
+const Bcrypt = require('bcrypt'); 	        // encryption
 
-const serieRoutes = [
-    //GET serieS
+const videoRoutes = [
+    //GET videoS
     {
         method: 'GET',
-        path: '/series',
-        handler: serieDao.getAllSeries,
+        path: '/videos',
+        handler: videoDao.getAllVideos(),
         config: {
             auth: {
                 strategy: 'token'
             },
         }
     },
-    // GET serie /ID
+    // GET video /ID
     {
         method: 'GET',
-        path: '/serie/{id}',
-        handler: serieDao.getSerieById,
+        path: '/videos/{id}',
+        handler: videoDao.getVideoById,
         config: {
             auth: {
                 strategy: 'token'
@@ -34,45 +34,42 @@ const serieRoutes = [
             }
         }
     },
-    //CREATE serie (POST)
+    //CREATE video (POST)
     {
         method: 'POST',
-        path: '/serie',
-        handler: serieDao.createSerie,
+        path: '/video',
+        handler: videoDao.createVideo,
         config: {
 
             validate: {
                 payload: {
-                    name: Joi.string().alphanum().max(50).required(),
+                    title: Joi.string().alphanum().max(50).required(),
                     description: Joi.string().alphanum().max(200).required(),
-                    picture: Joi.string().alphanum().max(50).required(),
-                    mediatype: Joi.string().alphanum().min(4).max(5).required(),
-
+                    file: Joi.string().alphanum().max(50).required(),
                 }
             }
         }
     },
-    //UPDATE serie (PUT)
+    //UPDATE video (PUT)
     {
         method: 'PUT',
-        path: '/serie/{id}',
-        handler: serieDao.updateSerie,
-        config:{
+        path: '/video/{id}',
+        handler: videoDao.updateVideo,
+        config: {
+
             validate: {
                 payload: {
-                    name: Joi.string().alphanum().max(50).required(),
+                    title: Joi.string().alphanum().max(50).required(),
                     description: Joi.string().alphanum().max(200).required(),
-                    picture: Joi.string().alphanum().max(50).required(),
-                    mediatype: Joi.string().alphanum().min(4).max(5).required(),
                 }
             }
         }
     },
-    //DELETE serie
+    //DELETE video
     {
         method: 'DELETE',
-        path: '/serie/{id}',
-        handler: serieDao.deleteSerie,
+        path: '/video/{id}',
+        handler: videoDao.deleteVideo,
         config: {
             auth: {
                 strategy: 'token'
@@ -86,4 +83,4 @@ const serieRoutes = [
     },
 ]
 
-export default serieRoutes;
+export default videoRoutes;

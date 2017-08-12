@@ -1,11 +1,11 @@
 import Knex from '../knex';                  //QueryBuilder
-import private_key from '../privatekey';     //PRIVATE KEY
+
 
 import userDao from '../dao/user'
 
-const jwt = require('jsonwebtoken')         //JWT
+
 const Joi = require('joi') 	            //inputs validation
-const Bcrypt = require('bcrypt') 	        // encryption
+
 
 const userRoutes = [
     //AUTHENTICATE
