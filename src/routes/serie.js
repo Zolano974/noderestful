@@ -2,7 +2,7 @@ import Knex from '../knex';                  //QueryBuilder
 import serieDao from '../dao/serie'          //DAO
 
 const jwt = require('jsonwebtoken')         //JWT
-const Joi = require('joi') 	                //inputs validation
+const Joi = require('joi')                  //inputs validation
 const Bcrypt = require('bcrypt')            // encryption
 
 const serieRoutes = [
