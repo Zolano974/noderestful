@@ -67,14 +67,14 @@ const serieDao = {
 
         const serie = request.payload;
 
-        if(!serie.file){
+        if(!serie.picture){
 
             reply('nofile')
             return
         }
 
         //on upload le fichier
-        var path = fileHelper.upload(serie.file, 'series')
+        var path = fileHelper.upload(serie.picture, 'series')
 
         //ajout d'un utilisateur
         Knex('series')
@@ -97,6 +97,7 @@ const serieDao = {
 
         const id = request.params.id;
         const serie = request.payload;
+        var picture = serie.picture
 
         Knex('series')
             .where('id', id)
@@ -114,28 +115,33 @@ const serieDao = {
 
                 var filepath = results[0].picture
 
-                //on supprime l'ancien fichier
-                fileHelper.remove(filepath)
+                // //on upload le nouveau
+                var path = fileHelper.upload(picture, 'series')
 
-                //on upload le nouveau
-                fileHelper.upload(serie.picture, 'series')
-
+                //
                 //on update la série
                 Knex('series')
                     .where('id', id)
                     .update({
                         name : serie.name,
                         description : serie.description,
-                        picture: serie.picture,
+                        picture: path,
                         mediatype : serie.mediatype
                     }).then((results) => {
-                    reply(true)
-                }).catch((err) => {
-                    reply(err)
-                    // reply('server-side error')
-                })
+                        // fileHelper.remove(filepath)
+                        reply({
+                            name : serie.name,
+                            description : serie.description,
+                            picture: path,
+                            mediatype : serie.mediatype
+                        })
+                    }).catch((err) => {
+                        // reply(err)
+                        reply('server-side error')
+                    })
             })
             .catch((err) => {
+                // reply('nik')
                 reply(err)
             });
 

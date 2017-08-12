@@ -49,7 +49,7 @@ const serieRoutes = [
                 payload: {
                     name: Joi.string().max(50).required(),
                     description: Joi.string().max(200).required(),
-                    picture: Joi.string().max(50).required(),
+                    picture: Joi.any().required(),
                     mediatype: Joi.string().min(4).max(5).required(),
 
                 }
@@ -62,11 +62,16 @@ const serieRoutes = [
         path: '/serie/{id}',
         handler: serieDao.updateSerie,
         config:{
+            payload: {
+                output: 'stream',
+                parse: true,
+                allow: 'multipart/form-data'
+            },
             validate: {
                 payload: {
                     name: Joi.string().max(50).required(),
                     description: Joi.string().max(200).required(),
-                    picture: Joi.string().max(50).required(),
+                    picture: Joi.any().required(),
                     mediatype: Joi.string().min(4).max(5).required(),
                 }
             }

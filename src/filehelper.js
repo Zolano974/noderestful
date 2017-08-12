@@ -9,6 +9,8 @@ const filehelper = {
         if(category !== 'photos' && category !== 'videos')
             category = 'series'
 
+        // console.log(category)
+        // return
         var name = fileToUpload.hapi.filename
             .replace(/\\/g, '')
             // .replace(/\./, '-')
@@ -16,6 +18,7 @@ const filehelper = {
 
         var now = datetime.format(new Date(), 'YYYY-MM-DD-HH-mm-ss')
         var path = upload_path + "/"+category+"/" + now + '-' + name
+
         var file = fs.createWriteStream(path)
 
         file.on('error', function (err) {
