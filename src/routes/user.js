@@ -20,9 +20,9 @@ const userRoutes = [
         path: '/users',
         handler: userDao.getAllUsers,
         config: {
-            auth: {
-                strategy: 'token'
-            },
+            // auth: {
+            //     strategy: 'token'
+            // },
         }
     },
     // GET USER /ID
@@ -31,9 +31,9 @@ const userRoutes = [
         path: '/user/{id}',
         handler: userDao.getUserById,
         config: {
-            auth: {
-                strategy: 'token'
-            },
+            // auth: {
+            //     strategy: 'token'
+            // },
             validate: {
                 params: {
                     id: Joi.number().integer()
@@ -54,7 +54,10 @@ const userRoutes = [
                     email: Joi.string().email(),
                     password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
                 }
-            }
+            },
+            // auth: {
+            //     // strategy: 'token'
+            // },
         }
     },
     //UPDATE USER (PUT)
@@ -70,7 +73,10 @@ const userRoutes = [
                     email: Joi.string().email(),
                     password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
                 }
-            }
+            },
+            // auth: {
+            //     // strategy: 'token'
+            // },
         }
     },
     //DELETE USER
@@ -79,15 +85,16 @@ const userRoutes = [
         path: '/user/{id}',
         handler: userDao.deleteUser,
         config: {
-            auth: {
-                strategy: 'token'
-            },
             validate: {
                 params: {
                     id: Joi.number().integer(),
                     mid: Joi.number().integer()
                 }
-            }
+            },
+            // auth: {
+            //     strategy: 'token'
+            // },
+
         }
     },
 ]

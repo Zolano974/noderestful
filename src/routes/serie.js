@@ -13,9 +13,9 @@ const serieRoutes = [
         path: '/series',
         handler: serieDao.getAllSeries,
         config: {
-            auth: {
-                strategy: 'token'
-            },
+            // auth: {
+            //     strategy: 'token'
+            // },
         }
     },
     // GET serie /ID
@@ -24,9 +24,9 @@ const serieRoutes = [
         path: '/serie/{id}',
         handler: serieDao.getSerieById,
         config: {
-            auth: {
-                strategy: 'token'
-            },
+            // auth: {
+            //     strategy: 'token'
+            // },
             validate: {
                 params: {
                     id: Joi.number().integer()
@@ -53,7 +53,10 @@ const serieRoutes = [
                     mediatype: Joi.string().min(4).max(5).required(),
 
                 }
-            }
+            },
+            // auth: {
+            //     // strategy: 'token'
+            // },
         }
     },
     //UPDATE serie (PUT)
@@ -74,7 +77,10 @@ const serieRoutes = [
                     picture: Joi.any().required(),
                     mediatype: Joi.string().min(4).max(5).required(),
                 }
-            }
+            },
+            // auth: {
+            //     // strategy: 'token'
+            // },
         }
     },
     //DELETE serie
@@ -83,9 +89,9 @@ const serieRoutes = [
         path: '/serie/{id}',
         handler: serieDao.deleteSerie,
         config: {
-            auth: {
-                strategy: 'token'
-            },
+            // auth: {
+            //     strategy: 'token'
+            // },
             validate: {
                 params: {
                     id: Joi.number().integer(),

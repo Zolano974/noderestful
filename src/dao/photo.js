@@ -4,6 +4,13 @@ import fileHelper from '../filehelper'
 const photoDao = {
     getAllPhotos: function (request, reply) {
 
+        //on gère le cas OPTIONS
+        if(request.method === 'options'){
+            reply().header('Access-Control-Allow-Headers', 'Authorization')
+            return
+        }
+
+        console.log("/photos post")
         Knex('photos')
             .select('id','title','description', 'file', 'created')
             .then((results) => {

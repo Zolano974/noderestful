@@ -11,24 +11,25 @@ const Bcrypt = require('bcrypt'); 	        // encryption
 const photoRoutes = [
     //GET PHOTOS
     {
-        method: 'GET',
+        method: ['GET', 'OPTIONS'],
         path: '/photos',
         handler: photoDao.getAllPhotos,
         config: {
-            auth: {
-                strategy: 'token'
-            },
+            // auth: {
+            //     // strategy: 'token'
+            // },
+            cors: true
         }
     },
     // GET PHOTO /ID
     {
-        method: 'GET',
-        path: '/photos/{id}',
+        method: ['GET', 'OPTIONS'],
+        path: '/photo/{id}',
         handler: photoDao.getPhotoById,
         config: {
-            auth: {
-                strategy: 'token'
-            },
+            // auth: {
+            //     // strategy: 'token'
+            // },
             validate: {
                 params: {
                     id: Joi.number().integer()
@@ -38,7 +39,7 @@ const photoRoutes = [
     },
     //CREATE photo (POST)
     {
-        method: 'POST',
+        method: ['POST', 'OPTIONS'],
         path: '/photo',
         handler: photoDao.createPhoto,
         config: {
@@ -53,12 +54,15 @@ const photoRoutes = [
                     description: Joi.string().max(200).required(),
                     file: Joi.any().required(),
                 }
-            }
+            },
+            // auth: {
+            //     // strategy: 'token'
+            // },
         }
     },
     //UPDATE photo (PUT)
     {
-        method: 'PUT',
+        method: ['PUT'],
         path: '/photo/{id}',
         handler: photoDao.updatePhoto,
         config: {
@@ -68,7 +72,10 @@ const photoRoutes = [
                     title: Joi.string().max(50).required(),
                     description: Joi.string().max(200).required(),
                 }
-            }
+            },
+            // auth: {
+            //     // strategy: 'token'
+            // },
         }
     },
     //DELETE photo
@@ -77,9 +84,9 @@ const photoRoutes = [
         path: '/photo/{id}',
         handler: photoDao.deletePhoto,
         config: {
-            auth: {
-                strategy: 'token'
-            },
+            // auth: {
+            //     strategy: 'token'
+            // },
             validate: {
                 params: {
                     id: Joi.number().integer(),

@@ -13,9 +13,9 @@ const videoRoutes = [
         path: '/videos',
         handler: videoDao.getAllVideos,
         config: {
-            auth: {
-                strategy: 'token'
-            },
+            // auth: {
+            //     strategy: 'token'
+            // },
         }
     },
     // GET video /ID
@@ -31,7 +31,10 @@ const videoRoutes = [
                 params: {
                     id: Joi.number().integer()
                 }
-            }
+            },
+            // auth: {
+            //     // strategy: 'token'
+            // },
         }
     },
     //CREATE video (POST)
@@ -51,7 +54,10 @@ const videoRoutes = [
                     description: Joi.string().max(200).required(),
                     file: Joi.any().required(),
                 }
-            }
+            },
+            // auth: {
+            //     // strategy: 'token'
+            // },
         }
     },
     //UPDATE video (PUT)
@@ -75,14 +81,14 @@ const videoRoutes = [
         path: '/video/{id}',
         handler: videoDao.deleteVideo,
         config: {
-            auth: {
-                strategy: 'token'
-            },
             validate: {
                 params: {
                     id: Joi.number().integer(),
                 }
-            }
+            },
+            auth: {
+                strategy: 'token'
+            },
         }
     },
 ]
