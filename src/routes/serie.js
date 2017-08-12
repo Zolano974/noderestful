@@ -43,10 +43,10 @@ const serieRoutes = [
 
             validate: {
                 payload: {
-                    name: Joi.string().alphanum().max(50).required(),
-                    description: Joi.string().alphanum().max(200).required(),
-                    picture: Joi.string().alphanum().max(50).required(),
-                    mediatype: Joi.string().alphanum().min(4).max(5).required(),
+                    name: Joi.string().max(50).required(),
+                    description: Joi.string().max(200).required(),
+                    picture: Joi.string().max(50).required(),
+                    mediatype: Joi.string().min(4).max(5).required(),
 
                 }
             }
@@ -60,10 +60,10 @@ const serieRoutes = [
         config:{
             validate: {
                 payload: {
-                    name: Joi.string().alphanum().max(50).required(),
-                    description: Joi.string().alphanum().max(200).required(),
-                    picture: Joi.string().alphanum().max(50).required(),
-                    mediatype: Joi.string().alphanum().min(4).max(5).required(),
+                    name: Joi.string().max(50).required(),
+                    description: Joi.string().max(200).required(),
+                    picture: Joi.string().max(50).required(),
+                    mediatype: Joi.string().min(4).max(5).required(),
                 }
             }
         }

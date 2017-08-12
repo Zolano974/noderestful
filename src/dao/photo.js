@@ -58,6 +58,9 @@ const photoDao = {
 
         const photo = request.payload;
 
+        // reply(photo)
+        // return;
+
         //ajout d'un utilisateur
         Knex('photos')
             .returning('id')
@@ -68,11 +71,11 @@ const photoDao = {
                     file: photo.file,
                 }
             ).then((results) => {
-            reply(results.id)
-        }).catch((err) => {
-            reply(err)
-            // reply('server-side error')
-        })
+                reply(results)
+            }).catch((err) => {
+                reply(err)
+                // reply('server-side error')
+            })
     },
     updatePhoto: function (request, reply) {
 

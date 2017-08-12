@@ -71,7 +71,7 @@ const userDao = {
                         password: encryptedPassword,
                     }
                 ).then((results) => {
-                reply(results.id)
+                reply(results)
             }).catch((err) => {
                 reply(err)
                 // reply('server-side error')

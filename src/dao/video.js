@@ -72,7 +72,7 @@ const videoDao = {
                     file: video.file,
                 }
             ).then((results) => {
-            reply(results.id)
+            reply(results)
         }).catch((err) => {
             reply(err)
             // reply('server-side error')

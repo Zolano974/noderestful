@@ -45,9 +45,9 @@ const photoRoutes = [
 
             validate: {
                 payload: {
-                    title: Joi.string().alphanum().max(50).required(),
-                    description: Joi.string().alphanum().max(200).required(),
-                    file: Joi.string().alphanum().max(50).required(),
+                    title: Joi.string().max(50).required(),
+                    description: Joi.string().max(200).required(),
+                    file: Joi.string().max(50).required(),
                 }
             }
         }
@@ -61,8 +61,8 @@ const photoRoutes = [
 
             validate: {
                 payload: {
-                    title: Joi.string().alphanum().max(50).required(),
-                    description: Joi.string().alphanum().max(200).required(),
+                    title: Joi.string().max(50).required(),
+                    description: Joi.string().max(200).required(),
                 }
             }
         }

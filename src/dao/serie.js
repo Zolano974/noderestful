@@ -77,7 +77,7 @@ const serieDao = {
                     mediatype : serie.mediatype
                 }
             ).then((results) => {
-            reply(results.id)
+            reply(results)
         }).catch((err) => {
             reply(err)
             // reply('server-side error')
