@@ -128,7 +128,7 @@ const serieDao = {
                         picture: path,
                         mediatype : serie.mediatype
                     }).then((results) => {
-                        // fileHelper.remove(filepath)
+                        fileHelper.remove(filepath)
                         reply({
                             name : serie.name,
                             description : serie.description,
