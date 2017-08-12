@@ -102,7 +102,11 @@ const photoDao = {
                 title: photo.title,
                 description: photo.description,
             }).then((results) => {
-            reply(true)
+            reply({
+                id: id,
+                title: photo.title,
+                description: photo.description
+            })
         }).catch((err) => {
             reply(err)
             // reply('server-side error')

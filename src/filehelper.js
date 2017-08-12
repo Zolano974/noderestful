@@ -6,7 +6,7 @@ const upload_path = '/srv/node/restful/uploads'
 const filehelper = {
     upload: function(fileToUpload, category){
 
-        if(category !== 'photos' && category !== 'video')
+        if(category !== 'photos' && category !== 'videos')
             category = 'series'
 
         var name = fileToUpload.hapi.filename

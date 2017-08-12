@@ -1,5 +1,5 @@
 import Knex from '../knex';                  //QueryBuilder
-import fileUpload from '../filehelper'
+import fileHelper from '../filehelper'
 
 const videoDao = {
     getAllVideos: function (request, reply) {
@@ -70,7 +70,7 @@ const videoDao = {
         }
 
         //on upload le fichier
-        var path = fileUpload.upload(video.file, 'videos')
+        var path = fileHelper.upload(video.file, 'videos')
 
         //ajout d'un utilisateur
         Knex('videos')
@@ -82,11 +82,11 @@ const videoDao = {
                     file: path,
                 }
             ).then((results) => {
-            reply(results)
-        }).catch((err) => {
-            reply(err)
-            // reply('server-side error')
-        })
+                reply(results)
+            }).catch((err) => {
+                reply(err)
+                // reply('server-side error')
+            })
     },
     updateVideo: function (request, reply) {
 
@@ -100,11 +100,15 @@ const videoDao = {
                 title: video.title,
                 description: video.description,
             }).then((results) => {
-            reply(true)
-        }).catch((err) => {
-            reply(err)
-            // reply('server-side error')
-        })
+                reply({
+                    id: id,
+                    title: video.title,
+                    description: video.description
+                })
+            }).catch((err) => {
+                reply(err)
+
+            })
     },
     deleteVideo: function (request, reply) {
         const id = request.params.id;
@@ -139,7 +143,7 @@ const videoDao = {
                     });
             })
             .catch((err) => {
-                reply(err)
+                reply("zob")
             });
     },
 }
