@@ -32,7 +32,7 @@ const serieDao = {
             reply('server-side error');
         });
     },
-    getSerieById:function (request, reply) {
+    getSerieById: function (request, reply) {
         const id = request.params.id;
         Knex('series')
             .where('id', id)
@@ -45,7 +45,7 @@ const serieDao = {
                 'created',
                 'updated'
             )
-            .then((results) => {
+            .then( (results) => {
                 //gestion de l'absence de données
                 if (!results || results.length === 0) {
                     reply({
@@ -56,28 +56,74 @@ const serieDao = {
 
                 var serie = results[0]
 
-                //récupèréation des photos liées
-                var photos = photoDao.getAllPhotosBySerieId(id)
-                reply(photos)
-                return
-                //
+                if(serie.mediatype === 'video'){
+                    videoDao.getAllVideosBySerieId(id)
+                        .then((output) => {
+                            reply({
+                                id: serie.id,
+                                name: serie.name,
+                                description: serie.description,
+                                picture: serie.picture,
+                                mediatype: serie.mediatype,
+                                medias: output,
+                                created: serie.created,
+                                updated: serie.updated,
+                            })
+                            return
+                        })
+                        .catch((err) => {
+                            reply(err)
+                        })
+                }
+                else{
+                    //récupèréation des photos liées
+                    photoDao.getAllPhotosBySerieId(id)
+                        .then((output) => {
+                            reply({
+                                id: serie.id,
+                                name: serie.name,
+                                description: serie.description,
+                                picture: serie.picture,
+                                mediatype: serie.mediatype,
+                                medias: output,
+                                created: serie.created,
+                                updated: serie.updated,
+                            });
+                        })
+                        .catch((err) => {
+                            reply(err)
+                        })
+
+                }
+
+
                 // var medias = (serie.mediatype === 'photo')
                 //             ? photoDao.getAllPhotosBySerieId(id)
                 //             : videoDao.getAllVideosBySerieId(id)
                 //
                 // console.log(medias)
-                //
+                // var mymedias = photos;
+                // // reply(mymedias)
+                // // return
                 // //response
+                // reply({
+                //     serie: serie,
+                //     medias: mymedias
+                // })
+
+
+                //response
                 // reply({
                 //     id: serie.id,
                 //     name: serie.name,
                 //     description: serie.description,
                 //     picture: serie.picture,
                 //     mediatype: serie.mediatype,
-                //     medias: medias,
+                //     medias: mymedias,
                 //     created: serie.created,
                 //     updated: serie.updated,
                 // });
+                return
             })
             .catch((err) => {
                 reply( err);
