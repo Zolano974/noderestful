@@ -1,5 +1,5 @@
 import Knex from '../knex';                  //QueryBuilder
-import fileUpload from '../filehelper'
+import fileHelper from '../filehelper'
 
 const serieDao = {
     getAllSeries: function (request, reply) {
@@ -74,7 +74,7 @@ const serieDao = {
         }
 
         //on upload le fichier
-        var path = fileUpload.upload(serie.file)
+        var path = fileHelper.upload(serie.file, 'series')
 
         //ajout d'un utilisateur
         Knex('series')
@@ -87,48 +87,102 @@ const serieDao = {
                     mediatype : serie.mediatype
                 }
             ).then((results) => {
-            reply(results)
-        }).catch((err) => {
-            reply(err)
-            // reply('server-side error')
-        })
+                reply(results)
+            }).catch((err) => {
+                reply(err)
+                // reply('server-side error')
+            })
     },
     updateSerie: function (request, reply) {
 
         const id = request.params.id;
         const serie = request.payload;
 
-        //ajout d'un utilisateur
         Knex('series')
             .where('id', id)
-            .update({
-                name : serie.name,
-                description : serie.description,
-                picture: serie.picture,
-                mediatype : serie.mediatype
-            }).then((results) => {
-            reply(true)
-        }).catch((err) => {
-            reply(err)
-            // reply('server-side error')
-        })
+            .select('picture')
+            .then((results) => {
+
+                //gestion de l'absence de données
+                if (!results || results.length === 0) {
+                    reply({
+                        error: true,
+                        errMessage: 'serie not found',
+                    })
+                    return
+                }
+
+                var filepath = results[0].picture
+
+                //on supprime l'ancien fichier
+                fileHelper.remove(filepath)
+
+                //on upload le nouveau
+                fileHelper.upload(serie.picture, 'series')
+
+                //on update la série
+                Knex('series')
+                    .where('id', id)
+                    .update({
+                        name : serie.name,
+                        description : serie.description,
+                        picture: serie.picture,
+                        mediatype : serie.mediatype
+                    }).then((results) => {
+                    reply(true)
+                }).catch((err) => {
+                    reply(err)
+                    // reply('server-side error')
+                })
+            })
+            .catch((err) => {
+                reply(err)
+            });
+
+
     },
     deleteSerie: function (request, reply) {
         const id = request.params.id;
         Knex('series')
             .where('id', id)
-            .del()
+            .select('picture')
             .then((results) => {
-                if(results.length > 0){
-                    reply(true)
-                    return;
+
+                //gestion de l'absence de données
+                if (!results || results.length === 0) {
+                    reply({
+                        error: true,
+                        errMessage: 'serie not found',
+                    })
+                    return
                 }
-                reply(false);
-                return;
+
+                var filepath = results[0].picture
+
+                //on supprime le fichier
+                fileHelper.remove(filepath)
+
+                //on supprime la série
+                Knex('series')
+                    .where('id', id)
+                    .del()
+                    .then((results) => {
+                        if(results.length > 0){
+                            reply(true)
+                            return;
+                        }
+                        reply(false);
+                        return;
+                    })
+                    .catch((err) => {
+                        reply('server-side error')
+                    });
             })
             .catch((err) => {
-                reply('server-side error')
+                reply(err)
             });
+
+
     },
 }
 

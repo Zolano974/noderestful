@@ -65,7 +65,7 @@ const photoDao = {
         }
 
         //on upload le fichier
-        var path = fileHelper.upload(photo.file)
+        var path = fileHelper.upload(photo.file, 'photos')
 
         //on insère la photo
         Knex('photos')

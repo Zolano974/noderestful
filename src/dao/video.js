@@ -70,7 +70,7 @@ const videoDao = {
         }
 
         //on upload le fichier
-        var path = fileUpload.upload(video.file)
+        var path = fileUpload.upload(video.file, 'videos')
 
         //ajout d'un utilisateur
         Knex('videos')
@@ -110,17 +110,36 @@ const videoDao = {
         const id = request.params.id;
         Knex('videos')
             .where('id', id)
-            .del()
+            .select('file')
             .then((results) => {
-                if(results.length > 0){
-                    reply(true)
-                    return;
+
+                //gestion de l'absence de données
+                if (!results || results.length === 0) {
+                    reply({
+                        error: true,
+                        errMessage: 'no file found for video',
+                    })
+                    return
                 }
-                reply(false);
-                return;
+
+                var filepath = results[0].file
+
+                //on supprime le fichier
+                fileHelper.remove(filepath)
+
+                //on supprime en base
+                Knex('videos')
+                    .where('id', id)
+                    .del()
+                    .then((results) => {
+                        reply(results)
+                    })
+                    .catch((err) => {
+                        reply('server-side error I')
+                    });
             })
             .catch((err) => {
-                reply('server-side error')
+                reply(err)
             });
     },
 }
