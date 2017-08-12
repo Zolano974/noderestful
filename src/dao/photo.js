@@ -1,4 +1,5 @@
-import Knex from '../knex';                  //QueryBuilder
+import Knex from '../knex'               //QueryBuilder
+import fileUpload from '../uploadfile'
 
 const photoDao = {
     getAllPhotos: function (request, reply) {
@@ -21,7 +22,7 @@ const photoDao = {
                 });
             }).catch((err) => {
             reply('server-side error');
-        });
+        })
     },
     getPhotoById: function (request, reply) {
         const id = request.params.id;
@@ -58,17 +59,30 @@ const photoDao = {
 
         const photo = request.payload;
 
-        // reply(photo)
-        // return;
+        if(!photo.file){
 
-        //ajout d'un utilisateur
+            reply('nofile')
+            return
+        }
+
+        //on upload le fichier
+        var path = fileUpload.upload(photo.file)
+
+
+        //on insère la photo
         Knex('photos')
-            .returning('id')
+            .returning(
+                'id',
+                'title',
+                'description',
+                'file',
+                'created',
+            )
             .insert(
                 {
                     title: photo.title,
                     description: photo.description,
-                    file: photo.file,
+                    file: path,
                 }
             ).then((results) => {
                 reply(results)
@@ -76,6 +90,7 @@ const photoDao = {
                 reply(err)
                 // reply('server-side error')
             })
+
     },
     updatePhoto: function (request, reply) {
 

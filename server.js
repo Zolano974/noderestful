@@ -32,7 +32,7 @@ server.register(HapiAuthJwt, (err) => {
 
     //on ajoute les routes issues de routes.js
     routes.forEach((route) => {
-        console.log( `attaching route ${ route.path }  [${ route.method }]` );
+        console.log( `attaching ${ route.method } route ${ route.path }` );
         server.route( route );
     });
 

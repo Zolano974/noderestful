@@ -42,12 +42,16 @@ const photoRoutes = [
         path: '/photo',
         handler: photoDao.createPhoto,
         config: {
-
+            payload: {
+                output: 'stream',
+                parse: true,
+                allow: 'multipart/form-data'
+            },
             validate: {
                 payload: {
                     title: Joi.string().max(50).required(),
                     description: Joi.string().max(200).required(),
-                    file: Joi.string().max(50).required(),
+                    file: Joi.any().required(),
                 }
             }
         }
