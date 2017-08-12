@@ -4,12 +4,6 @@ import fileHelper from '../filehelper'
 const photoDao = {
     getAllPhotos: function (request, reply) {
 
-        //on gère le cas OPTIONS
-        if(request.method === 'options'){
-            reply().header('Access-Control-Allow-Headers', 'Authorization')
-            return
-        }
-
         console.log("/photos post")
         Knex('photos')
             .select('id','title','description', 'file', 'created')
@@ -23,7 +17,7 @@ const photoDao = {
                 }
                 //response
                 reply({
-                    data: results,
+                    photos: results,
                     count: results.length,
                 });
             }).catch((err) => {
@@ -121,6 +115,7 @@ const photoDao = {
     },
     deletePhoto: function (request, reply) {
         const id = request.params.id;
+
         Knex('photos')
             .where('id', id)
             .select('file')

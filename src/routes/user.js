@@ -11,8 +11,11 @@ const userRoutes = [
     //AUTHENTICATE
     {
         path: '/auth',
-        method: 'POST',
+        method: ['POST', 'OPTIONS'],
         handler: userDao.authenticate,
+        config:{
+            cors: true
+        }
     },
     //GET USERS
     {
@@ -20,9 +23,10 @@ const userRoutes = [
         path: '/users',
         handler: userDao.getAllUsers,
         config: {
-            // auth: {
-            //     strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
+            cors: true
         }
     },
     // GET USER /ID
@@ -31,14 +35,15 @@ const userRoutes = [
         path: '/user/{id}',
         handler: userDao.getUserById,
         config: {
-            // auth: {
-            //     strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
             validate: {
                 params: {
                     id: Joi.number().integer()
                 }
-            }
+            },
+            cors: true
         }
     },
     //CREATE USER (POST)
@@ -55,9 +60,10 @@ const userRoutes = [
                     password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
                 }
             },
-            // auth: {
-            //     // strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
+            cors: true
         }
     },
     //UPDATE USER (PUT)
@@ -74,9 +80,10 @@ const userRoutes = [
                     password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
                 }
             },
-            // auth: {
-            //     // strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
+            cors: true
         }
     },
     //DELETE USER
@@ -91,10 +98,50 @@ const userRoutes = [
                     mid: Joi.number().integer()
                 }
             },
-            // auth: {
-            //     strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
+            cors: true
 
+        }
+    },
+    //OPTIONS USER
+    {
+        method: 'OPTIONS',
+        path: '/users',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
+        }
+    },
+    //OPTIONS USER
+    {
+        method: 'OPTIONS',
+        path: '/user',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
+        }
+    },
+    //OPTIONS USER
+    {
+        method: 'OPTIONS',
+        path: '/user/{id}',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
         }
     },
 ]

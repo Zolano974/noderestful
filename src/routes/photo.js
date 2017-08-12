@@ -11,35 +11,36 @@ const Bcrypt = require('bcrypt'); 	        // encryption
 const photoRoutes = [
     //GET PHOTOS
     {
-        method: ['GET', 'OPTIONS'],
+        method: 'GET',
         path: '/photos',
         handler: photoDao.getAllPhotos,
         config: {
-            // auth: {
-            //     // strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
             cors: true
         }
     },
     // GET PHOTO /ID
     {
-        method: ['GET', 'OPTIONS'],
+        method: 'GET',
         path: '/photo/{id}',
         handler: photoDao.getPhotoById,
         config: {
-            // auth: {
-            //     // strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
             validate: {
                 params: {
                     id: Joi.number().integer()
                 }
-            }
+            },
+            cors: true
         }
     },
     //CREATE photo (POST)
     {
-        method: ['POST', 'OPTIONS'],
+        method: 'POST',
         path: '/photo',
         handler: photoDao.createPhoto,
         config: {
@@ -55,14 +56,15 @@ const photoRoutes = [
                     file: Joi.any().required(),
                 }
             },
-            // auth: {
-            //     // strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
+            cors: true,
         }
     },
     //UPDATE photo (PUT)
     {
-        method: ['PUT'],
+        method: 'PUT',
         path: '/photo/{id}',
         handler: photoDao.updatePhoto,
         config: {
@@ -73,9 +75,10 @@ const photoRoutes = [
                     description: Joi.string().max(200).required(),
                 }
             },
-            // auth: {
-            //     // strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
+            cors: true,
         }
     },
     //DELETE photo
@@ -84,16 +87,56 @@ const photoRoutes = [
         path: '/photo/{id}',
         handler: photoDao.deletePhoto,
         config: {
-            // auth: {
-            //     strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
             validate: {
                 params: {
                     id: Joi.number().integer(),
                 }
-            }
+            },
+            cors: true
         }
     },
+    //OPTIONS PHOTOS
+    {
+        method: 'OPTIONS',
+        path: '/photos',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
+        }
+    },
+    //OPTIONS PHOTOS
+    {
+        method: 'OPTIONS',
+        path: '/photo',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
+        }
+    },
+    //OPTIONS PHOTOS
+    {
+        method: 'OPTIONS',
+        path: '/photo/{id}',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
+        }
+    }
 ]
 
 export default photoRoutes;

@@ -1,4 +1,3 @@
-
 import Knex from '../knex';                  //QueryBuilder
 import serieDao from '../dao/serie'          //DAO
 
@@ -13,9 +12,10 @@ const serieRoutes = [
         path: '/series',
         handler: serieDao.getAllSeries,
         config: {
-            // auth: {
-            //     strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
+            cors: true
         }
     },
     // GET serie /ID
@@ -24,14 +24,15 @@ const serieRoutes = [
         path: '/serie/{id}',
         handler: serieDao.getSerieById,
         config: {
-            // auth: {
-            //     strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
             validate: {
                 params: {
                     id: Joi.number().integer()
                 }
-            }
+            },
+            cors: true
         }
     },
     //CREATE serie (POST)
@@ -54,9 +55,10 @@ const serieRoutes = [
 
                 }
             },
-            // auth: {
-            //     // strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
+            cors: true
         }
     },
     //UPDATE serie (PUT)
@@ -64,7 +66,7 @@ const serieRoutes = [
         method: 'PUT',
         path: '/serie/{id}',
         handler: serieDao.updateSerie,
-        config:{
+        config: {
             payload: {
                 output: 'stream',
                 parse: true,
@@ -78,9 +80,10 @@ const serieRoutes = [
                     mediatype: Joi.string().min(4).max(5).required(),
                 }
             },
-            // auth: {
-            //     // strategy: 'token'
-            // },
+            cors: true,
+            auth: {
+                strategy: 'token'
+            },
         }
     },
     //DELETE serie
@@ -89,16 +92,56 @@ const serieRoutes = [
         path: '/serie/{id}',
         handler: serieDao.deleteSerie,
         config: {
-            // auth: {
-            //     strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
             validate: {
                 params: {
                     id: Joi.number().integer(),
                 }
-            }
+            },
+            cors: true
         }
     },
+    //OPTIONS serie
+    {
+        method: 'OPTIONS',
+        path: '/series',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
+        }
+    },
+    //OPTIONS serie
+    {
+        method: 'OPTIONS',
+        path: '/serie',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
+        }
+    },
+    //OPTIONS serie
+    {
+        method: 'OPTIONS',
+        path: '/serie/{id}',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
+        }
+    }
 ]
 
 export default serieRoutes;

@@ -6,6 +6,7 @@ const Bcrypt = require('bcrypt') 	        // encryption
 
 const userDao = {
         getAllUsers: function (request, reply) {
+
             Knex('users')
                 .select('id', 'username', 'password', 'email')
                 .then((results) => {
@@ -96,7 +97,9 @@ const userDao = {
             })
         },
         deleteUser: function (request, reply) {
+
             const id = request.params.id;
+
             Knex('users')
                 .where('id', id)
                 .del()
@@ -114,7 +117,13 @@ const userDao = {
         },
         authenticate: function (request, reply) {
 
-            console.log('auth')
+            //on gère le cas OPTIONS
+            if(request.method === 'options'){
+                reply()
+                    .header('Access-Control-Allow-Origin', '*')
+                    .header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+                return
+            }
 
             // This is a ES6 standard
             const {username, password} = request.payload;

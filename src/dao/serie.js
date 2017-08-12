@@ -25,7 +25,7 @@ const serieDao = {
 
                 //response
                 reply({
-                    data: results,
+                    series: results,
                     count: results.length,
                 });
             }).catch((err) => {
@@ -34,6 +34,7 @@ const serieDao = {
     },
     getSerieById: function (request, reply) {
         const id = request.params.id;
+
         Knex('series')
             .where('id', id)
             .select(
@@ -96,33 +97,6 @@ const serieDao = {
 
                 }
 
-
-                // var medias = (serie.mediatype === 'photo')
-                //             ? photoDao.getAllPhotosBySerieId(id)
-                //             : videoDao.getAllVideosBySerieId(id)
-                //
-                // console.log(medias)
-                // var mymedias = photos;
-                // // reply(mymedias)
-                // // return
-                // //response
-                // reply({
-                //     serie: serie,
-                //     medias: mymedias
-                // })
-
-
-                //response
-                // reply({
-                //     id: serie.id,
-                //     name: serie.name,
-                //     description: serie.description,
-                //     picture: serie.picture,
-                //     mediatype: serie.mediatype,
-                //     medias: mymedias,
-                //     created: serie.created,
-                //     updated: serie.updated,
-                // });
                 return
             })
             .catch((err) => {
@@ -216,7 +190,9 @@ const serieDao = {
 
     },
     deleteSerie: function (request, reply) {
+
         const id = request.params.id;
+
         Knex('series')
             .where('id', id)
             .select('picture')

@@ -7,21 +7,23 @@ const Joi = require('joi'); 	            //inputs validation
 const Bcrypt = require('bcrypt'); 	        // encryption
 
 const videoRoutes = [
+
     //GET videoS
     {
         method: 'GET',
         path: '/videos',
         handler: videoDao.getAllVideos,
         config: {
-            // auth: {
-            //     strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
+            cors: true
         }
     },
     // GET video /ID
     {
         method: 'GET',
-        path: '/videos/{id}',
+        path: '/video/{id}',
         handler: videoDao.getVideoById,
         config: {
             auth: {
@@ -32,9 +34,10 @@ const videoRoutes = [
                     id: Joi.number().integer()
                 }
             },
-            // auth: {
-            //     // strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
+            cors: true
         }
     },
     //CREATE video (POST)
@@ -55,9 +58,10 @@ const videoRoutes = [
                     file: Joi.any().required(),
                 }
             },
-            // auth: {
-            //     // strategy: 'token'
-            // },
+            auth: {
+                strategy: 'token'
+            },
+            cors: true
         }
     },
     //UPDATE video (PUT)
@@ -72,7 +76,8 @@ const videoRoutes = [
                     title: Joi.string().max(50).required(),
                     description: Joi.string().max(200).required(),
                 }
-            }
+            },
+            cors: true
         }
     },
     //DELETE video
@@ -89,6 +94,46 @@ const videoRoutes = [
             auth: {
                 strategy: 'token'
             },
+            cors: true
+        }
+    },
+    //OPTIONS video
+    {
+        method: 'OPTIONS',
+        path: '/videos',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
+        }
+    },
+    //OPTIONS video
+    {
+        method: 'OPTIONS',
+        path: '/video',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
+        }
+    },
+    //OPTIONS video
+    {
+        method: 'OPTIONS',
+        path: '/video/{id}',
+        handler: (request, reply) => {
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+        },
+        config: {
+            cors: true
         }
     },
 ]

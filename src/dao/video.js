@@ -4,6 +4,14 @@ import fileHelper from '../filehelper'
 const videoDao = {
     getAllVideos: function (request, reply) {
 
+        //on gère le cas OPTIONS
+        if(request.method === 'options'){
+            reply()
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', 'Authorization')
+            return
+        }
+
         Knex('videos')
             .select(
                 'id',
@@ -21,7 +29,7 @@ const videoDao = {
                 }
                 //response
                 reply({
-                    data: results,
+                    videos: results,
                     count: results.length,
                 });
             }).catch((err) => {
@@ -30,6 +38,12 @@ const videoDao = {
     },
     getVideoById: function (request, reply) {
         const id = request.params.id;
+
+        //on gère le cas OPTIONS
+        if(request.method === 'options'){
+            reply().header('Access-Control-Allow-Origin', '*').header('Access-Control-Allow-Headers', 'Authorization')
+            return
+        }
 
         Knex('videos')
             .where('id', id)
@@ -63,6 +77,12 @@ const videoDao = {
 
         const video = request.payload;
 
+        //on gère le cas OPTIONS
+        if(request.method === 'options'){
+            reply().header('Access-Control-Allow-Origin', '*').header('Access-Control-Allow-Headers', 'Authorization')
+            return
+        }
+
         if(!video.file){
 
             reply('nofile')
@@ -93,6 +113,12 @@ const videoDao = {
         const id = request.params.id;
         const video = request.payload;
 
+        //on gère le cas OPTIONS
+        if(request.method === 'options'){
+            reply().header('Access-Control-Allow-Origin', '*').header('Access-Control-Allow-Headers', 'Authorization')
+            return
+        }
+
         //ajout d'un utilisateur
         Knex('videos')
             .where('id', id)
@@ -112,6 +138,13 @@ const videoDao = {
     },
     deleteVideo: function (request, reply) {
         const id = request.params.id;
+
+        //on gère le cas OPTIONS
+        if(request.method === 'options'){
+            reply().header('Access-Control-Allow-Origin', '*').header('Access-Control-Allow-Headers', 'Authorization')
+            return
+        }
+
         Knex('videos')
             .where('id', id)
             .select('file')
