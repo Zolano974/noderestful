@@ -57,7 +57,7 @@ const userRoutes = [
                 payload: {
                     username: Joi.string().alphanum().min(3).max(30).required(),
                     email: Joi.string().email(),
-                    password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/)
+                    password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/).required()
                 }
             },
             auth: {
@@ -112,7 +112,7 @@ const userRoutes = [
         handler: (request, reply) => {
             reply()
                 .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization')
+                .header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
         },
         config: {
             cors: true
@@ -125,7 +125,7 @@ const userRoutes = [
         handler: (request, reply) => {
             reply()
                 .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization')
+                .header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
         },
         config: {
             cors: true
@@ -138,7 +138,7 @@ const userRoutes = [
         handler: (request, reply) => {
             reply()
                 .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization')
+                .header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
         },
         config: {
             cors: true

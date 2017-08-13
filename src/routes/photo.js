@@ -47,7 +47,8 @@ const photoRoutes = [
             payload: {
                 output: 'stream',
                 parse: true,
-                allow: 'multipart/form-data'
+                allow: 'multipart/form-data',
+                maxBytes: 1048576 * 1024    // 1GB
             },
             validate: {
                 payload: {
@@ -68,7 +69,6 @@ const photoRoutes = [
         path: '/photo/{id}',
         handler: photoDao.updatePhoto,
         config: {
-
             validate: {
                 payload: {
                     title: Joi.string().max(50).required(),
