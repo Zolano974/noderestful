@@ -84,7 +84,7 @@ const mediaDao = {
                     description: media.description,
                 })
 
-            var updatedmedia = await this.fetchOneById(media.id)
+            var updatedmedia = await mediaDao.fetchOneById(media.id)
 
             return updatedmedia
 
@@ -97,7 +97,7 @@ const mediaDao = {
 
         try{
             //on récupère le média
-            var media = await this.fetchOneById(id)
+            var media = await mediaDao.fetchOneById(id)
 
             var result = await Knex('media')
                 .where('id', id)

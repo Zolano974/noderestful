@@ -37,7 +37,7 @@ const serieDao = {
                 var medias = await mediaDao.fetchMediasBySerieId(id)
 
                 var serieWithMedias = {
-                    ...serie,
+                    ...serie[0],
                     medias: medias
                 }
 
@@ -98,7 +98,7 @@ const serieDao = {
             try{
 
                 //on renvoie l'objet complet
-                var updatedSerie = await this.fetchOneById(id)
+                var updatedSerie = await serieDao.fetchOneById(id)
 
                 return updatedSerie
 
@@ -114,7 +114,7 @@ const serieDao = {
     delete: async (id) => {
         try{
             
-            var serie = await this.fetchOneById(id)
+            var serie = await serieDao.fetchOneById(id)
 
             //on supprime la série
             var res = await Knex('series')
