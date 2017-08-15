@@ -68,8 +68,12 @@ const mediaRoutes = [
         config: {
             validate: {
                 payload: {
+                    id: Joi.number(),
+                    serieId: Joi.number().integer().required(),
                     title: Joi.string().max(50).required(),
                     description: Joi.string().max(200).required(),
+                    mediatype: Joi.any(),
+                    file: Joi.any(),
                 }
             },
             auth: {

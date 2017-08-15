@@ -32,6 +32,8 @@ const serieRoutes = [
             cors: true
         }
     },
+
+
     //CREATE serie (POST)
     {
         method: 'POST',

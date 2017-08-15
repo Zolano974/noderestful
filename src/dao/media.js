@@ -1,5 +1,4 @@
 import Knex from '../knex'               //QueryBuilder
-import fileHelper from '../filehelper'
 
 const mediaDao = {
 
@@ -84,7 +83,7 @@ const mediaDao = {
                     description: media.description,
                 })
 
-            var updatedmedia = await mediaDao.fetchOneById(media.id)
+            var updatedmedia = await mediaDao.fetchOneById(id)
 
             return updatedmedia
 

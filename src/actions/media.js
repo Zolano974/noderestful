@@ -78,6 +78,8 @@ const media = {
         try {
 
             var results = mediaDao.update(entity, id)
+
+            reply(results)
         }
         catch (err) {
             reply(err)
@@ -90,6 +92,7 @@ const media = {
             var result = await mediaDao.delete(id)
             //on supprime lefichier
             fileHelper.remove(result.file)
+
             reply(result)
         }catch(err){
             reply(err)
