@@ -97,7 +97,7 @@ LOCK TABLES `messages` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `photos`
+-- Table structure for table `medias`
 --
 
 DROP TABLE IF EXISTS `photos`;
@@ -114,12 +114,12 @@ CREATE TABLE `photos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `photos`
+-- Dumping data for table `medias`
 --
 
 LOCK TABLES `photos` WRITE;
 /*!40000 ALTER TABLE `photos` DISABLE KEYS */;
-INSERT INTO `photos` VALUES (35,'New title','photo a été modifiée','/photos/2017-08-12-12-07-59-kaya.jpg','2017-08-12 08:09:09'),(36,'zobby !!!','photo a été modifiée','/photos/2017-08-12-12-08-00-kaya.jpg','2017-08-12 08:10:58'),(37,'photo2','zobsrzerzerzer','/photos/2017-08-13-12-40-00-aurora.jpg','2017-08-13 08:40:00');
+INSERT INTO `photos` VALUES (35,'New title','photo a été modifiée','/medias/2017-08-12-12-07-59-kaya.jpg','2017-08-12 08:09:09'),(36,'zobby !!!','photo a été modifiée','/medias/2017-08-12-12-08-00-kaya.jpg','2017-08-12 08:10:58'),(37,'photo2','zobsrzerzerzer','/medias/2017-08-13-12-40-00-aurora.jpg','2017-08-13 08:40:00');
 /*!40000 ALTER TABLE `photos` ENABLE KEYS */;
 UNLOCK TABLES;
 

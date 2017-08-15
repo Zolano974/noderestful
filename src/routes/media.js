@@ -49,6 +49,8 @@ const mediaRoutes = [
                 payload: {
                     title: Joi.string().max(50).required(),
                     description: Joi.string().max(200).required(),
+                    serieId: Joi.number().integer().required(),
+                    mediatype: Joi.string().max(5).required(),
                     file: Joi.any().required(),
                 }
             },

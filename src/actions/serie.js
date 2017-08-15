@@ -45,9 +45,9 @@ const serie = {
         var path = fileHelper.upload(entity.picture, 'series')
 
         try{
-            var insertedentity = await serieDao.insert(serie, path)
+            var inserted = serieDao.insert(entity, path)
 
-            reply(insertedentity)
+            reply(inserted)
         }
         catch(err){
             throw err

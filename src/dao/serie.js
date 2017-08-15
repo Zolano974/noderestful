@@ -54,7 +54,7 @@ const serieDao = {
     insert: async (serie, path) => {
 
         try{
-            var res = await         Knex('series')
+            var res =     await Knex('series')
                                 .returning('id')
                                 .insert({
                                         name : serie.name,
@@ -62,13 +62,23 @@ const serieDao = {
                                         picture: path,
                                 })
 
-            var id = res.id
+            console.log(res)
+            console.log(res[0])
 
-            var insertedSerie = await this.fetchOneById(id)
+            try{
+                var insertedSerie = await serieDao.fetchOneById(res[0])
 
-            return insertedSerie
+                console.log(insertedSerie)
+
+                return insertedSerie
+
+            }catch(err2){
+                throw err2
+            }
+
 
         }catch(err){
+            console.log(err)
             throw err
         }
 

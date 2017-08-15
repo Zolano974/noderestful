@@ -5,16 +5,12 @@ import mediaDao from '../dao/media'
 const media = {
 
     getAllMedias: async (request, reply) => {
-
+        console.log("get all medias")
         try {
             var medias = await mediaDao.fetchAll()
 
-            if (!medias || medias.length === 0 || medias.error === true) {
-                reply({
-                    error: true,
-                    errMessage: 'error while fetching medias (dao/media.js l. 13)',
-                })
-                return
+            if (!medias || medias.length === 0) {
+                medias = []
             }
 
             reply({
@@ -53,15 +49,17 @@ const media = {
     },
     createMedia: async function (request, reply) {
 
+
         const entity = request.payload;
 
-        if (!media.file) {
+        if (!entity.file) {
             reply('nofile')
             return
         }
 
         //on upload le fichier
-        var path = fileHelper.upload(entity, 'medias')
+        var path = fileHelper.upload(entity.file, 'medias')
+        console.log("create media")
 
         try {
             var result = await mediaDao.insert(entity, path)

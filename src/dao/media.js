@@ -47,28 +47,29 @@ const mediaDao = {
         }
     },
     insert: async (media, filepath) => {
+
         try {
-            var results = await Knex('medias')
-                .returning(
-                    'id',
-                )
-                .insert(
-                    {
-                        serie_id: media.serieId,
-                        title: media.title,
-                        description: media.description,
-                        file: filepath,
-                        mediatype: media.mediatype,
-                    }
-                )
+            var insertId = await Knex('media')
+                                .returning(
+                                    'id',
+                                )
+                                .insert(
+                                    {
+                                        serie_id: media.serieId,
+                                        title: media.title,
+                                        description: media.description,
+                                        file: filepath,
+                                        mediatype: media.mediatype,
+                                    }
+                                )
+            var id = insertId[0]
 
-            var id = results.id
+            var media = await mediaDao.fetchOneById(id)
 
-            //on renvoie le media nouvellement créé
-            var media = await this.fetchOneById(id)
-            return media
+            return media[0]
         }
         catch (err) {
+            console.log(err)
             throw err
         }
     },
@@ -98,7 +99,7 @@ const mediaDao = {
             //on récupère le média
             var media = await this.fetchOneById(id)
 
-            var result = await Knex('medias')
+            var result = await Knex('media')
                 .where('id', id)
                 .del()
             
@@ -111,7 +112,7 @@ const mediaDao = {
     fetchMediasBySerieId: async (serieId) => {
 
         try{
-            var results = await Knex('medias')
+            var results = await Knex('media')
                 .where('serie_id', serieId)
                 .select(
                     'id',

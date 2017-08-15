@@ -41,15 +41,14 @@ const serieRoutes = [
             payload: {
                 output: 'stream',
                 parse: true,
-                allow: 'multipart/form-data'
+                allow: 'multipart/form-data',
+                maxBytes: 1048576 * 1024    // 1GB
             },
             validate: {
                 payload: {
                     name: Joi.string().max(50).required(),
                     description: Joi.string().max(200).required(),
-                    picture: Joi.any().required(),
-                    mediatype: Joi.string().min(4).max(5).required(),
-
+                    picture: Joi.any().required()
                 }
             },
             auth: {
