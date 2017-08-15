@@ -1,18 +1,14 @@
 
-import Knex from '../knex';                  //QueryBuilder
-import videoDao from '../dao/video'
+import media from '../actions/media'
 
-const jwt = require('jsonwebtoken')         //JWT
 const Joi = require('joi'); 	            //inputs validation
-const Bcrypt = require('bcrypt'); 	        // encryption
 
-const videoRoutes = [
-
-    //GET videoS
+const mediaRoutes = [
+    //GET mediaS
     {
         method: 'GET',
-        path: '/videos',
-        handler: videoDao.getAllVideos,
+        path: '/medias',
+        handler: media.getAllMedias,
         config: {
             auth: {
                 strategy: 'token'
@@ -20,11 +16,11 @@ const videoRoutes = [
             cors: true
         }
     },
-    // GET video /ID
+    // GET media /ID
     {
         method: 'GET',
-        path: '/video/{id}',
-        handler: videoDao.getVideoById,
+        path: '/media/{id}',
+        handler: media.getMediaById,
         config: {
             auth: {
                 strategy: 'token'
@@ -34,22 +30,20 @@ const videoRoutes = [
                     id: Joi.number().integer()
                 }
             },
-            auth: {
-                strategy: 'token'
-            },
             cors: true
         }
     },
-    //CREATE video (POST)
+    //CREATE media (POST)
     {
         method: 'POST',
-        path: '/video',
-        handler: videoDao.createVideo,
+        path: '/media',
+        handler: media.createMedia,
         config: {
             payload: {
                 output: 'stream',
                 parse: true,
-                allow: 'multipart/form-data'
+                allow: 'multipart/form-data',
+                maxBytes: 1048576 * 1024    // 1GB
             },
             validate: {
                 payload: {
@@ -61,46 +55,48 @@ const videoRoutes = [
             auth: {
                 strategy: 'token'
             },
-            cors: true
+            cors: true,
         }
     },
-    //UPDATE video (PUT)
+    //UPDATE media (PUT)
     {
         method: 'PUT',
-        path: '/video/{id}',
-        handler: videoDao.updateVideo,
+        path: '/media/{id}',
+        handler: media.updateMedia,
         config: {
-
             validate: {
                 payload: {
                     title: Joi.string().max(50).required(),
                     description: Joi.string().max(200).required(),
                 }
             },
-            cors: true
+            auth: {
+                strategy: 'token'
+            },
+            cors: true,
         }
     },
-    //DELETE video
+    //DELETE media
     {
         method: 'DELETE',
-        path: '/video/{id}',
-        handler: videoDao.deleteVideo,
+        path: '/media/{id}',
+        handler: media.deleteMedia,
         config: {
+            auth: {
+                strategy: 'token'
+            },
             validate: {
                 params: {
                     id: Joi.number().integer(),
                 }
             },
-            auth: {
-                strategy: 'token'
-            },
             cors: true
         }
     },
-    //OPTIONS video
+    //OPTIONS mediaS
     {
         method: 'OPTIONS',
-        path: '/videos',
+        path: '/medias',
         handler: (request, reply) => {
             reply()
                 .header('Access-Control-Allow-Origin', '*')
@@ -110,10 +106,10 @@ const videoRoutes = [
             cors: true
         }
     },
-    //OPTIONS video
+    //OPTIONS mediaS
     {
         method: 'OPTIONS',
-        path: '/video',
+        path: '/media',
         handler: (request, reply) => {
             reply()
                 .header('Access-Control-Allow-Origin', '*')
@@ -123,10 +119,10 @@ const videoRoutes = [
             cors: true
         }
     },
-    //OPTIONS video
+    //OPTIONS mediaS
     {
         method: 'OPTIONS',
-        path: '/video/{id}',
+        path: '/media/{id}',
         handler: (request, reply) => {
             reply()
                 .header('Access-Control-Allow-Origin', '*')
@@ -135,7 +131,7 @@ const videoRoutes = [
         config: {
             cors: true
         }
-    },
+    }
 ]
 
-export default videoRoutes;
+export default mediaRoutes;

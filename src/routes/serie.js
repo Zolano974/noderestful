@@ -1,16 +1,13 @@
-import Knex from '../knex';                  //QueryBuilder
-import serieDao from '../dao/serie'          //DAO
+import serie from '../actions/serie'          //DAO
 
-const jwt = require('jsonwebtoken')         //JWT
 const Joi = require('joi')                  //inputs validation
-const Bcrypt = require('bcrypt')            // encryption
 
 const serieRoutes = [
     //GET serieS
     {
         method: 'GET',
         path: '/series',
-        handler: serieDao.getAllSeries,
+        handler: serie.getAllSeries,
         config: {
             auth: {
                 strategy: 'token'
@@ -22,7 +19,7 @@ const serieRoutes = [
     {
         method: 'GET',
         path: '/serie/{id}',
-        handler: serieDao.getSerieById,
+        handler: serie.getSerieById,
         config: {
             auth: {
                 strategy: 'token'
@@ -39,7 +36,7 @@ const serieRoutes = [
     {
         method: 'POST',
         path: '/serie',
-        handler: serieDao.createSerie,
+        handler: serie.createSerie,
         config: {
             payload: {
                 output: 'stream',
@@ -65,7 +62,7 @@ const serieRoutes = [
     {
         method: 'PUT',
         path: '/serie/{id}',
-        handler: serieDao.updateSerie,
+        handler: serie.updateSerie,
         config: {
             payload: {
                 output: 'stream',
@@ -90,7 +87,7 @@ const serieRoutes = [
     {
         method: 'DELETE',
         path: '/serie/{id}',
-        handler: serieDao.deleteSerie,
+        handler: serie.deleteSerie,
         config: {
             auth: {
                 strategy: 'token'

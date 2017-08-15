@@ -1,6 +1,6 @@
 //import resources for each resource
 import userRoutes from './routes/user'
-import photoRoutes from './routes/photo'
+import photoRoutes from './routes/media'
 import serieRoutes from './routes/serie'
 import videoRoutes from './routes/video'
 

@@ -7,7 +7,7 @@ export default require('knex')({
         user: 'root',
         password: '',
 
-        database: 'noderestful',
+        database: 'apiV2',
         charset: 'utf8',
     }
 

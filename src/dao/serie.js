@@ -1,239 +1,122 @@
 import Knex from '../knex';                  //QueryBuilder
 import fileHelper from '../filehelper'
-import videoDao from './video'
-import photoDao from './photo'
+import mediaDao from '../dao/media'
+
 const serieDao = {
-    getAllSeries: function (request, reply) {
 
-        Knex('series')
-            .select(
-                'id',
-                'name',
-                'description',
-                'picture',
-                'mediatype',
-                'created',
-                'updated'
-            )
-            .then((results) => {
-                if (!results || results.length === 0) {
-                    reply({
-                        error: true,
-                        errMessage: 'no series found',
-                    });
-                }
+    fetchAll: async () => {
 
-                //response
-                reply({
-                    series: results,
-                    count: results.length,
-                });
-            }).catch((err) => {
-            reply('server-side error');
-        });
+        try{
+            var series = await  Knex('series')
+                                .select(
+                                    'id',
+                                    'name',
+                                    'description',
+                                    'picture',
+                                    'created',
+                                    'updated'
+                                )
+            return series
+        }catch(err){
+            throw err
+        }
     },
-    getSerieById: function (request, reply) {
-        const id = request.params.id;
+    fetchOneById: async (id) => {
+        try{
+            var serie = await  Knex('series')
+                                .where('id', id)
+                                .select(
+                                    'id',
+                                    'name',
+                                    'description',
+                                    'picture',
+                                    'created',
+                                    'updated'
+                                )
+            try{
+                var medias = await mediaDao.fetchMediasBySerieId(id)
 
-        Knex('series')
-            .where('id', id)
-            .select(
-                'id',
-                'name',
-                'description',
-                'picture',
-                'mediatype',
-                'created',
-                'updated'
-            )
-            .then( (results) => {
-                //gestion de l'absence de données
-                if (!results || results.length === 0) {
-                    reply({
-                        error: true,
-                        errMessage: 'no series found by id ' + id,
-                    });
+                var serieWithMedias = {
+                    ...serie,
+                    medias: medias
                 }
 
-                var serie = results[0]
-
-                if(serie.mediatype === 'video'){
-                    videoDao.getAllVideosBySerieId(id)
-                        .then((output) => {
-                            reply({
-                                id: serie.id,
-                                name: serie.name,
-                                description: serie.description,
-                                picture: serie.picture,
-                                mediatype: serie.mediatype,
-                                medias: output,
-                                created: serie.created,
-                                updated: serie.updated,
-                            })
-                            return
-                        })
-                        .catch((err) => {
-                            reply(err)
-                        })
-                }
-                else{
-                    //récupèréation des photos liées
-                    photoDao.getAllPhotosBySerieId(id)
-                        .then((output) => {
-                            reply({
-                                id: serie.id,
-                                name: serie.name,
-                                description: serie.description,
-                                picture: serie.picture,
-                                mediatype: serie.mediatype,
-                                medias: output,
-                                created: serie.created,
-                                updated: serie.updated,
-                            });
-                        })
-                        .catch((err) => {
-                            reply(err)
-                        })
-
-                }
-
-                return
-            })
-            .catch((err) => {
-                reply( err);
-                // reply( 'server-side error' );
-            });
-
-    },
-    createSerie: function (request, reply) {
-
-        const serie = request.payload;
-
-        if(!serie.picture){
-
-            reply('nofile')
-            return
+                return serieWithMedias
+            }
+            catch(err2){
+                throw err2
+            }
+        }catch(err1){
+            throw err1
         }
 
-        //on upload le fichier
-        var path = fileHelper.upload(serie.picture, 'series')
-
-        //ajout d'un utilisateur
-        Knex('series')
-            .returning('id')
-            .insert(
-                {
-                    name : serie.name,
-                    description : serie.description,
-                    picture: path,
-                    mediatype : serie.mediatype
-                }
-            ).then((results) => {
-                reply(results)
-            }).catch((err) => {
-                reply(err)
-                // reply('server-side error')
-            })
     },
-    updateSerie: function (request, reply) {
+    insert: async (serie, path) => {
 
-        const id = request.params.id;
-        const serie = request.payload;
-        var picture = serie.picture
+        try{
+            var res = await         Knex('series')
+                                .returning('id')
+                                .insert({
+                                        name : serie.name,
+                                        description : serie.description,
+                                        picture: path,
+                                })
 
-        Knex('series')
-            .where('id', id)
-            .select('picture')
-            .then((results) => {
+            var id = res.id
 
-                //gestion de l'absence de données
-                if (!results || results.length === 0) {
-                    reply({
-                        error: true,
-                        errMessage: 'serie not found',
-                    })
-                    return
-                }
+            var insertedSerie = await this.fetchOneById(id)
 
-                var filepath = results[0].picture
+            return insertedSerie
 
-                // //on upload le nouveau
-                var path = fileHelper.upload(picture, 'series')
-
-                //
-                //on update la série
-                Knex('series')
-                    .where('id', id)
-                    .update({
-                        name : serie.name,
-                        description : serie.description,
-                        picture: path,
-                        mediatype : serie.mediatype
-                    }).then((results) => {
-                        fileHelper.remove(filepath)
-                        reply({
-                            name : serie.name,
-                            description : serie.description,
-                            picture: path,
-                            mediatype : serie.mediatype
-                        })
-                    }).catch((err) => {
-                        // reply(err)
-                        reply('server-side error')
-                    })
-            })
-            .catch((err) => {
-                // reply('nik')
-                reply(err)
-            });
-
+        }catch(err){
+            throw err
+        }
 
     },
-    deleteSerie: function (request, reply) {
+    update: async (serie, id, path) => {
 
-        const id = request.params.id;
+        try{
+            //on update la série
+            var res = await  Knex('series')
+                            .where('id', id)
+                            .update({
+                                name : serie.name,
+                                description : serie.description,
+                                picture: path,
+                            })
 
-        Knex('series')
-            .where('id', id)
-            .select('picture')
-            .then((results) => {
+            try{
 
-                //gestion de l'absence de données
-                if (!results || results.length === 0) {
-                    reply({
-                        error: true,
-                        errMessage: 'serie not found',
-                    })
-                    return
-                }
+                //on renvoie l'objet complet
+                var updatedSerie = await this.fetchOneById(id)
 
-                var filepath = results[0].picture
+                return updatedSerie
 
-                //on supprime le fichier
-                fileHelper.remove(filepath)
-
-                //on supprime la série
-                Knex('series')
-                    .where('id', id)
-                    .del()
-                    .then((results) => {
-                        if(results.length > 0){
-                            reply(true)
-                            return;
-                        }
-                        reply(false);
-                        return;
-                    })
-                    .catch((err) => {
-                        reply('server-side error')
-                    });
-            })
-            .catch((err) => {
-                reply(err)
-            });
-
+            }catch(err2){
+                throw err2
+            }
+        }
+        catch(err){
+            throw err
+        }
 
     },
+    delete: async (id) => {
+        try{
+            
+            var serie = await this.fetchOneById(id)
+
+            //on supprime la série
+            var res = await Knex('series')
+                .where('id', id)
+                .del()
+
+            return serie
+
+        }catch(err){
+            throw err
+        }
+    }
 }
 
 export default serieDao
