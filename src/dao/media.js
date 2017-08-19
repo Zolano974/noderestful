@@ -39,7 +39,7 @@ const mediaDao = {
                     'updated'
                 )
 
-            return results
+            return (!results || results.length === 0) ? null : results[0]
 
         }catch (err){
             throw err
@@ -65,7 +65,7 @@ const mediaDao = {
 
             var media = await mediaDao.fetchOneById(id)
 
-            return media[0]
+            return media
         }
         catch (err) {
             console.log(err)

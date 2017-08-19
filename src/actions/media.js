@@ -27,28 +27,26 @@ const media = {
         const id = request.params.id;
 
         try {
-            var entities = await mediaDao.fetchOneById(id)
+            var entity = await mediaDao.fetchOneById(id)
 
-            if (!entities || entities.length === 0) {
+            if (!entity) {
                 reply({
                     error: true,
-                    errMessage: 'error while fetching media #'+id+' (dao/media.js l. 13)',
+                    errMessage: 'media #'+id+' not found (dao/media.js l. 13)',
                 })
                 return
             }
 
-            reply({
-                medias: medias,
-                count: medias.length,
-            })
+            reply(entity)
+
         } catch (err) {
+            console.log(err)
             reply(err);
             // reply('server-side error');
         }
 
     },
     createMedia: async function (request, reply) {
-
 
         const entity = request.payload;
 

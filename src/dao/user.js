@@ -1,180 +1,145 @@
-import Knex from '../knex';                  //QueryBuilder
-import private_key from '../privatekey';     //PRIVATE KEY
-const jwt = require('jsonwebtoken')         //JWT
-const Bcrypt = require('bcrypt') 	        // encryption
+import Knex from '../knex';                     //QueryBuilder
+import private_key from '../privatekey';        //PRIVATE KEY
+const jwt = require('jsonwebtoken')             //JWT
+const Bcrypt = require('bcrypt') 	            // encryption
 
 
 const userDao = {
-        getAllUsers: function (request, reply) {
 
-            Knex('users')
-                .select('id', 'username', 'password', 'email')
-                .then((results) => {
-                    if (!results || results.length === 0) {
-                        reply({
-                            error: true,
-                            errMessage: 'no users found',
-                        });
-                    }
-                    //response
-                    reply({
-                        data: results,
-                        count: results.length,
-                    });
-                }).catch((err) => {
-                reply('server-side error');
-            });
+        fetchAll: async () => {
+
+            var users = await   Knex('users')
+                                .select(
+                                    'id',
+                                    'username',
+                                    'password',
+                                    'email'
+                                )
+
+            return users
+            try{
+
+            }catch(err){
+                throw err
+            }
         },
-        getUserById: function (request, reply) {
-            const id = request.params.id;
+        fetchOneById: async (id) => {
+            var user = await   Knex('users')
+                                .where('id', id)
+                                .select(
+                                    'id',
+                                    'username',
+                                    'password',
+                                    'email'
+                                )
 
-            Knex('users')
-            .where('id', id)
-            .select(
-                'id',
-                'username',
-                'email'
-            )
-            .then((results) => {
-                //gestion de l'absence de données
-                if (!results || results.length === 0) {
-                    reply({
-                        error: true,
-                        errMessage: 'no users found by id ' + id,
-                    });
-                }
+            return (!user || user.length === 0) ? null : user[0]
+            try{
 
-                //response
-                reply({
-                    data: results,
-                });
-            })
-            .catch((err) => {
-                reply('server-side error');
-            });
-
+            }catch(err){
+                throw err
+            }
         },
-        createUser: function (request, reply) {
 
-            const user = request.payload;
+        insert: async (user) => {
 
-            //Encryption
-            var salt = Bcrypt.genSaltSync();
-            var encryptedPassword = Bcrypt.hashSync(user.password, salt);
+            try{
 
-            //ajout d'un utilisateur
-            Knex('users')
-                .returning('id')
-                .insert(
-                    {
-                        username: user.username,
-                        email: user.email,
-                        password: encryptedPassword,
-                    }
-                ).then((results) => {
-                reply(results)
-            }).catch((err) => {
-                reply(err)
-                // reply('server-side error')
-            })
-        },
-        updateUser: function (request, reply) {
+                var insertId = await Knex('users')
+                    .returning(
+                        'id',
+                    )
+                    .insert(
+                        user
+                    )
 
-            const id = request.params.id;
-            const user = request.payload;
+                var createdUser = await userDao.fetchOneById(insertId)
 
-            //ajout d'un utilisateur
-            Knex('users')
-                .where('id', id)
-                .update({
-                    username: user.username,
-                    email: user.email,
-                }).then((results) => {
-                reply(true)
-            }).catch((err) => {
-                reply(err)
-                // reply('server-side error')
-            })
-        },
-        deleteUser: function (request, reply) {
+                return createdUser
 
-            const id = request.params.id;
-
-            Knex('users')
-                .where('id', id)
-                .del()
-                .then((results) => {
-                    if (results.length > 0) {
-                        reply(true)
-                        return;
-                    }
-                    reply(false);
-                    return;
-                })
-                .catch((err) => {
-                    reply('server-side error')
-                });
-        },
-        authenticate: function (request, reply) {
-
-            //on gère le cas OPTIONS
-            if(request.method === 'options'){
-                reply()
-                    .header('Access-Control-Allow-Origin', '*')
-                    .header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
-                return
+            }catch(err){
+                throw err
             }
 
-            // This is a ES6 standard
-            const {username, password} = request.payload;
+        },
+        update: async (user,id) =>{
 
-            Knex('users')
-                .where(
-                    'username', username
-                ).select(
-                    'id',
-                    'password'
-                ).then(([user]) => {
 
-                    //absence de l'utilisateur
-                    if (!user) {
-                        reply({
-                            error: true,
-                            errMessage: 'the specified user was not found',
-                        });
-                        return;
-                    }
-                    //on compare les hash
-                    if (Bcrypt.compareSync(password, user.password)) {
-                        // if(password === user.password){
+            try{
+                var results = await  Knex('users')
+                                    .where('id', id)
+                                    .update({
+                                        username: user.username,
+                                        email: user.email,
+                                    })
 
-                        //on génère le token JWT
-                        const token = jwt.sign({
-                                username,
-                                scope: user.id,
-                                group: "zob",
-                            },
-                            private_key,
-                            {
-                                algorithm: 'HS256',
-                                expiresIn: '1h',
-                            }
-                        );
+                try{
+                    var updatedUser = await userDao.fetchOneById(id)
 
-                        //on renvoie le token JWT
-                        reply({
-                            token,
-                            scope: user.id,
-                        })
-                    }
-                    else {
-                        reply('invalid password, asshole')
-                    }
+                    return updatedUser
+                }catch (err2) {
+                    throw err2
                 }
-            ).catch((err) => {
-                reply(err);
-                reply('server-side error');
-            });
+            }catch(err){
+                throw err
+            }
+        },
+        delete: async (id) => {
+
+            try{
+                var result = await Knex('users')
+                                    .where('id', id)
+                                    .del()
+
+                try{
+                    var deletedUser = await userDao.fetchOneById(id)
+
+                    return deletedUser
+
+                }catch(err2){
+                    throw err2
+                }
+            }
+            catch(err){
+                throw err
+            }
+        },
+        authenticate: async (username, password) => {
+
+            try{
+                var user = await Knex('users')
+                                .where(
+                                    'username', username
+                                ).select(
+                                    'id',
+                                    'password'
+                                )
+
+                if(!user) return false
+
+                if(Bcrypt.compareSync(password, user.password)){
+
+                    //on génère le token JWT
+                    var token = jwt.sign({
+                            username,
+                            id: user.id,
+                            group: "zob",
+                        },
+                        private_key,
+                        {
+                            algorithm: 'HS256',
+                            expiresIn: '1h',
+                        }
+                    );
+
+                    return token
+                }
+                else return false
+
+            }catch(err){
+                throw err
+            }
+
         },
     }
 
