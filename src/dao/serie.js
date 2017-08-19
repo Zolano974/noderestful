@@ -1,5 +1,5 @@
-import Knex from '../knex';                  //QueryBuilder
-import fileHelper from '../filehelper'
+import Knex from '../lib/knex';                  //QueryBuilder
+import fileHelper from '../lib/filehelper'
 import mediaDao from '../dao/media'
 
 const serieDao = {

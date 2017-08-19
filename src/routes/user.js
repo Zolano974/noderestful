@@ -1,5 +1,5 @@
 import user from '../actions/user'
-import optionsquery from '../optionsquery'
+import optionsquery from '../lib/optionsquery'
 
 const Joi = require('joi') 	            //inputs validation
 

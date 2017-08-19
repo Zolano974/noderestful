@@ -1,5 +1,5 @@
-import Knex from '../knex';                     //QueryBuilder
-import private_key from '../privatekey';        //PRIVATE KEY
+import Knex from '../lib/knex';                     //QueryBuilder
+import private_key from '../lib/privatekey';        //PRIVATE KEY
 const jwt = require('jsonwebtoken')             //JWT
 const Bcrypt = require('bcrypt') 	            // encryption
 

@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');            //JWT
 
 import routes from './src/routes';              //Routes
 
-import private_key from './src/privatekey';     //privatekey
+import private_key from './src/lib/privatekey';     //privatekey
 
 // Create a server with a host and port
 const server = new Hapi.Server();

@@ -1,5 +1,5 @@
 import userDao from '../dao/user'
-import optionsquery from '../optionsquery'
+import optionsquery from '../lib/optionsquery'
 
 const user = {
     getAllUsers: async (request, reply) => {

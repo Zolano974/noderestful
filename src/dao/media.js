@@ -1,4 +1,4 @@
-import Knex from '../knex'               //QueryBuilder
+import Knex from '../lib/knex'               //QueryBuilder
 
 const mediaDao = {
 

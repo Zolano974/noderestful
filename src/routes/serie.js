@@ -1,5 +1,5 @@
 import serie from '../actions/serie'          //DAO
-import optionsquery from '../optionsquery'
+import optionsquery from '../lib/optionsquery'
 
 const Joi = require('joi')                  //inputs validation
 
