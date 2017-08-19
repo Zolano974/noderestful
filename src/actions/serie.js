@@ -60,8 +60,8 @@ const serie = {
 
         try{
             //on récupère le path de l'ancien fichier
-            var entityOldPath = await serieDao.fetchOneById(id)
-            var oldpicture = entityOldPath.picture
+            var entityToUpdate = await serieDao.fetchOneById(id)
+            var oldpicture = entityToUpdate.picture
 
             // //on upload le nouveau
             var path = fileHelper.upload(newpicture, 'series')
@@ -71,6 +71,8 @@ const serie = {
                 var updatedEntity = await serieDao.update(entity, id, path)
                 //on supprime l'ancien fichier
                 fileHelper.remove(oldpicture)
+
+                reply(updatedEntity)
             }
             catch(err2){
                 throw err2

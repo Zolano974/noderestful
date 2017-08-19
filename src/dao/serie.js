@@ -1,5 +1,4 @@
 import Knex from '../lib/knex';                  //QueryBuilder
-import fileHelper from '../lib/filehelper'
 import mediaDao from '../dao/media'
 
 const serieDao = {
@@ -23,7 +22,7 @@ const serieDao = {
     },
     fetchOneById: async (id) => {
         try{
-            var serie = await  Knex('series')
+            var series = await  Knex('series')
                                 .where('id', id)
                                 .select(
                                     'id',
@@ -36,8 +35,8 @@ const serieDao = {
             try{
                 var medias = await mediaDao.fetchMediasBySerieId(id)
 
-                var serieWithMedias = {
-                    ...serie[0],
+                var serieWithMedias = (!series || series.length === 0) ? null : {
+                    ...series[0],
                     medias: medias
                 }
 

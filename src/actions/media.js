@@ -18,7 +18,6 @@ const media = {
             })
         } catch (err) {
             reply(err);
-            // reply('server-side error');
         }
 
     },

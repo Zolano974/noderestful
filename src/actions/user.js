@@ -52,13 +52,13 @@ const user = {
             var salt = Bcrypt.genSaltSync();
             var encryptedPassword = Bcrypt.hashSync(entity.password, salt);
 
-            var entity = await userDao.insert({
+            var insertedUser = await userDao.insert({
                 username: entity.username,
                 email: entity.email,
                 password: encryptedPassword,        //password crypté
             })
 
-            reply(entity)
+            reply(insertedUser)
 
         }catch(err){
             reply(err)
@@ -111,6 +111,7 @@ const user = {
             reply(response)
 
         }catch(err){
+            console.log(err)
             reply(err)
         }
 

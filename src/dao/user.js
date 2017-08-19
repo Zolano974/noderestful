@@ -117,7 +117,9 @@ const userDao = {
 
                 if(!user) return false
 
-                if(Bcrypt.compareSync(password, user.password)){
+                console.log(password, user[0])
+
+                if(Bcrypt.compareSync(password, user[0].password)){
 
                     //on génère le token JWT
                     var token = jwt.sign({
