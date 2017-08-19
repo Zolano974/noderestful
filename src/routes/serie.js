@@ -1,4 +1,5 @@
 import serie from '../actions/serie'          //DAO
+import optionsquery from '../optionsquery'
 
 const Joi = require('joi')                  //inputs validation
 
@@ -106,9 +107,7 @@ const serieRoutes = [
         method: 'OPTIONS',
         path: '/series',
         handler: (request, reply) => {
-            reply()
-                .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization')
+            optionsquery.handle(reply)
         },
         config: {
             cors: true
@@ -119,9 +118,7 @@ const serieRoutes = [
         method: 'OPTIONS',
         path: '/serie',
         handler: (request, reply) => {
-            reply()
-                .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization')
+            optionsquery.handle(reply)
         },
         config: {
             cors: true
@@ -132,9 +129,7 @@ const serieRoutes = [
         method: 'OPTIONS',
         path: '/serie/{id}',
         handler: (request, reply) => {
-            reply()
-                .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization')
+            optionsquery.handle(reply)
         },
         config: {
             cors: true

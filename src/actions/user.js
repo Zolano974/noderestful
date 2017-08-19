@@ -1,5 +1,5 @@
-import fileHelper from '../filehelper'
 import userDao from '../dao/user'
+import optionsquery from '../optionsquery'
 
 const user = {
     getAllUsers: async (request, reply) => {
@@ -91,11 +91,9 @@ const user = {
     },
     authenticate: async (request, reply) => {
 
-        //on gère le cas OPTIONS
+        //on gère le cas OPTIONS: on renvoie les bons headers
         if(request.method === 'options'){
-            reply()
-                .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+            optionsquery.handle(reply)
             return
         }
 

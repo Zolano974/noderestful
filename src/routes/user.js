@@ -1,19 +1,15 @@
-import Knex from '../knex';                  //QueryBuilder
-
-
-import userDao from '../dao/user'
-
+import user from '../actions/user'
+import optionsquery from '../optionsquery'
 
 const Joi = require('joi') 	            //inputs validation
-
 
 const userRoutes = [
     //AUTHENTICATE
     {
         path: '/auth',
         method: ['POST', 'OPTIONS'],
-        handler: userDao.authenticate,
-        config:{
+        handler: user.authenticate,
+        config: {
             cors: true
         }
     },
@@ -21,7 +17,7 @@ const userRoutes = [
     {
         method: 'GET',
         path: '/users',
-        handler: userDao.getAllUsers,
+        handler: user.getAllUsers,
         config: {
             auth: {
                 strategy: 'token'
@@ -33,7 +29,7 @@ const userRoutes = [
     {
         method: 'GET',
         path: '/user/{id}',
-        handler: userDao.getUserById,
+        handler: user.getUserById,
         config: {
             auth: {
                 strategy: 'token'
@@ -50,7 +46,7 @@ const userRoutes = [
     {
         method: 'POST',
         path: '/user',
-        handler: userDao.createUser,
+        handler: user.createUser,
         config: {
 
             validate: {
@@ -70,7 +66,7 @@ const userRoutes = [
     {
         method: 'PUT',
         path: '/user/{id}',
-        handler: userDao.updateUser,
+        handler: user.updateUser,
         config: {
 
             validate: {
@@ -90,7 +86,7 @@ const userRoutes = [
     {
         method: 'DELETE',
         path: '/user/{id}',
-        handler: userDao.deleteUser,
+        handler: user.deleteUser,
         config: {
             validate: {
                 params: {
@@ -110,9 +106,7 @@ const userRoutes = [
         method: 'OPTIONS',
         path: '/users',
         handler: (request, reply) => {
-            reply()
-                .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+            optionsquery.handle(reply)
         },
         config: {
             cors: true
@@ -123,9 +117,7 @@ const userRoutes = [
         method: 'OPTIONS',
         path: '/user',
         handler: (request, reply) => {
-            reply()
-                .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+            optionsquery.handle(reply)
         },
         config: {
             cors: true
@@ -136,9 +128,7 @@ const userRoutes = [
         method: 'OPTIONS',
         path: '/user/{id}',
         handler: (request, reply) => {
-            reply()
-                .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+            optionsquery.handle(reply)
         },
         config: {
             cors: true

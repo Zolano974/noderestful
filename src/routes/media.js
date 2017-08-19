@@ -1,5 +1,5 @@
-
 import media from '../actions/media'
+import optionsquery from '../optionsquery'
 
 const Joi = require('joi'); 	            //inputs validation
 
@@ -104,9 +104,7 @@ const mediaRoutes = [
         method: 'OPTIONS',
         path: '/medias',
         handler: (request, reply) => {
-            reply()
-                .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization')
+            optionsquery.handle(reply)
         },
         config: {
             cors: true
@@ -117,9 +115,7 @@ const mediaRoutes = [
         method: 'OPTIONS',
         path: '/media',
         handler: (request, reply) => {
-            reply()
-                .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization')
+            optionsquery.handle(reply)
         },
         config: {
             cors: true
@@ -130,9 +126,7 @@ const mediaRoutes = [
         method: 'OPTIONS',
         path: '/media/{id}',
         handler: (request, reply) => {
-            reply()
-                .header('Access-Control-Allow-Origin', '*')
-                .header('Access-Control-Allow-Headers', 'Authorization')
+            optionsquery.handle(reply)
         },
         config: {
             cors: true
