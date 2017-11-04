@@ -2,13 +2,14 @@
  * Created by zolano on 11/4/17.
  */
 import introduction from '../actions/introduction'
+import optionsquery from '../lib/optionsquery'
 
 const Joi = require('joi'); 	            //inputs validation
 
 const introRoutes = [
     //GET intro
     {
-        method: ['GET', 'OPTIONS'],
+        method: ['GET'],
         path: '/intro',
         handler: introduction.getIntro,
         config: {
@@ -20,7 +21,7 @@ const introRoutes = [
     },
     //SET intro
     {
-        method: ['POST', 'OPTIONS'],
+        method: ['POST'],
         path: '/intro',
         handler: introduction.setIntro,
         config: {
@@ -40,6 +41,17 @@ const introRoutes = [
             auth: {
                 strategy: 'token'
             },
+            cors: true
+        }
+    },
+    //OPTIONS INTRO
+    {
+        method: 'OPTIONS',
+        path: '/intro',
+        handler: (request, reply) => {
+            optionsquery.handle(reply)
+        },
+        config: {
             cors: true
         }
     }
