@@ -10,5 +10,14 @@ export default require('knex')({
         database: 'apiV2',
         charset: 'utf8',
     }
+    // connection: {
+    //     host: '0.0.0.0',
+    //
+    //     user: 'root',
+    //     password: '123',
+    //
+    //     database: 'restful',
+    //     charset: 'utf8',
+    // }
 
 });

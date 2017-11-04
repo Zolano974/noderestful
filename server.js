@@ -16,7 +16,7 @@ const server = new Hapi.Server();
 //set up server connection
 server.connection({
     host: 'localhost',
-    port: 8000
+    port: 4000
 });
 
 // SETUP SERVER

@@ -5,7 +5,32 @@ const user = {
     getAllUsers: async (request, reply) => {
 
         try{
-            var users = userDao.fetchAll()
+            var users = await userDao.fetchAll()
+
+            var users2 = []
+
+            for(var i=0; i < users.length; i++){
+                var userbis = {
+                    name: users[i].name,
+                    surname: users[i].surname,
+                    mail: users[i].name+'.'+users[i].surname+'@zob.com',
+                }
+
+                users2.push(userbis)
+            }
+
+            //OU BIEN
+            var users3 = users.map((user) => {
+                return {
+                    name: user.name,
+                    surname: user.surname,
+                    mail: user.name+'.'+user.surname+'@zob.com',
+                }
+            })
+
+            var user12 = users.find((user) => {
+                return user.id === 12
+            })
 
             if (!users || users.length === 0) {
                 users = []

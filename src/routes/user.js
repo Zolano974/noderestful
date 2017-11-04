@@ -51,8 +51,8 @@ const userRoutes = [
 
             validate: {
                 payload: {
-                    username: Joi.string().alphanum().min(3).max(30).required(),
                     email: Joi.string().email(),
+                    username: Joi.string().alphanum().min(3).max(30).required(),
                     password: Joi.string().regex(/^[a-zA-Z0-9]{8,30}$/).required()
                 }
             },

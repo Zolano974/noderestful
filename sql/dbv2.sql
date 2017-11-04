@@ -67,3 +67,16 @@ LOCK TABLES `users` WRITE;
 INSERT INTO `users` VALUES (3,'YOLO','$2a$10$6OD7WWhWGrVF.aFmzqiwAO9I9v7KEyE7PBMauhUnnAp0tlhASRLf.','enfoiro@enculo.com'),(4,'Sophie','$2a$10$V7sgXianjrZAWmlfvWe7A.iun5QVMCbFhe.ExldwGHbmou2wJcL1y','sophie@culcul.zob'),(5,'Zobby','$2a$10$0ZpZJAhJ1nH1FOhxftkyaOMuhZ8Fggzk72QqlIDEdOoR/RIHcJb7y','zobby@lamouche.nik'),(6,'zerzerzer','$2a$10$lG2zqwASCgy6btGPPYFTROYNxzLgF1IyIBBvTdFDW86WyC4lrhx1.',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+create table introduction
+(
+  title varchar(127) default 'Welcome to Irvins' null,
+  body varchar(255) default 'A super fotograf' null,
+  picture varchar(127) null,
+  id int default '1' not null
+    primary key
+)
+  comment 'on main page'
+;
+

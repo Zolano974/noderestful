@@ -4,6 +4,7 @@ const datetime = require('date-and-time')
 const upload_path = '/srv/node/restful/uploads'
 
 const filehelper = {
+
     upload: function(fileToUpload, category){
 
         if(category !== 'medias')
@@ -19,7 +20,28 @@ const filehelper = {
         var now = datetime.format(new Date(), 'YYYY-MM-DD-HH-mm-ss')
         var path = upload_path + "/"+category+"/" + now + '-' + name
 
-        var file = fs.createWriteStream(path)
+        //on gère l'upload
+        this.uploadFile(path)
+
+        return path.replace(upload_path, '');
+    },
+    uploadIntroFile: function (fileToUpload){
+        var name = fileToUpload.hapi.filename
+            .replace(/\\/g, '')
+            // .replace(/\./, '-')
+            .replace(/ /, '-')
+
+        var now = datetime.format(new Date(), 'YYYY-MM-DD-HH-mm-ss')
+        var path = upload_path + "/intro/" + now + '-' + name
+
+        this.uploadFile(path)
+
+        return path.replace(upload_path, '');
+
+    },
+    uploadFile (fullpath){
+
+        var file = fs.createWriteStream(fullpath)
 
         file.on('error', function (err) {
             console.error(err)
@@ -30,7 +52,6 @@ const filehelper = {
         fileToUpload.on('end', function (err) {
             console.log('file uploaded !')
         })
-        return path.replace(upload_path, '');
     },
     remove: function(pathToRemove){
 
