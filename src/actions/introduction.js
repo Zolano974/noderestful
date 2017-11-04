@@ -5,12 +5,16 @@ const introduction = {
     getIntro: async (request, reply) => {
         try{
             var intro = await introDao.get()
-            reply(intro)
+            reply({
+                intro:intro
+            })
         }catch(err){
             reply(err)
         }
     },
     setIntro: async (request, reply) => {
+
+        console.log('set intro')
         const intro = request.payload
 
         if (!entity.file) {

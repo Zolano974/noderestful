@@ -28,14 +28,19 @@ const introRoutes = [
             payload: {
                 output: 'stream',
                 parse: true,
-                allow: 'multipart/form-data',
+                allow: [
+                    'application/json',
+                    'multipart/form-data',
+                    'image/jpg',
+                    'image/png'
+                ],
                 maxBytes: 1048576 * 1024    // 1GB
             },
             validate: {
                 payload: {
-                    title: Joi.string().max(127).required(),
-                    body: Joi.string().max(255).required(),
-                    picture: Joi.any().required(),
+                    title: Joi.string().max(127),
+                    body: Joi.string().max(255),
+                    picture: Joi.any(),
                 }
             },
             auth: {
