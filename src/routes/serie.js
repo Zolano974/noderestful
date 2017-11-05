@@ -10,9 +10,6 @@ const serieRoutes = [
         path: '/series',
         handler: serie.getAllSeries,
         config: {
-            auth: {
-                strategy: 'token'
-            },
             cors: true
         }
     },
@@ -22,9 +19,6 @@ const serieRoutes = [
         path: '/serie/{id}',
         handler: serie.getSerieById,
         config: {
-            auth: {
-                strategy: 'token'
-            },
             validate: {
                 params: {
                     id: Joi.number().integer()

@@ -10,9 +10,6 @@ const mediaRoutes = [
         path: '/medias',
         handler: media.getAllMedias,
         config: {
-            auth: {
-                strategy: 'token'
-            },
             cors: true
         }
     },
@@ -22,9 +19,6 @@ const mediaRoutes = [
         path: '/media/{id}',
         handler: media.getMediaById,
         config: {
-            auth: {
-                strategy: 'token'
-            },
             validate: {
                 params: {
                     id: Joi.number().integer()

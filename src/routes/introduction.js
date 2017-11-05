@@ -13,9 +13,6 @@ const introRoutes = [
         path: '/intro',
         handler: introduction.getIntro,
         config: {
-            auth: {
-                strategy: 'token'
-            },
             cors: true
         }
     },
